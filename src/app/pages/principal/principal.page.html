@@ -1,0 +1,106 @@
+<ion-split-pane contentId="contenido-principal" when="lg">
+  <ion-menu
+    menuId="menu-principal"
+    contentId="contenido-principal"
+    type="overlay"
+  >
+    <ion-content>
+      <div class="menu-container">
+        <div class="marca">
+          <div class="logos">
+            <img src="assets/Logo/STEEL.jpeg" alt="STEEL" />
+            <img src="assets/Logo/IEM.jpeg" alt="IEM" />
+          </div>
+
+          <p class="marca-titulo">Control de Sobrantes</p>
+          <p class="marca-subtitulo">Gestión de materiales</p>
+
+          <p *ngIf="nombreUsuario" class="marca-subtitulo">
+            {{ nombreUsuario }}
+          </p>
+
+          <p *ngIf="mensajeSesion" class="marca-subtitulo" role="status">
+            {{ mensajeSesion }}
+          </p>
+        </div>
+
+        <nav class="menu-opciones" aria-label="Menú principal">
+          <p class="menu-etiqueta">PRINCIPAL</p>
+
+          <ion-menu-toggle [autoHide]="false">
+            <a
+              routerLink="/principal/inicio"
+              routerLinkActive="activo"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              Inicio
+            </a>
+          </ion-menu-toggle>
+
+          <ion-menu-toggle [autoHide]="false">
+  <a
+    routerLink="/principal/sobrantes"
+    routerLinkActive="activo"
+  >
+    Sobrantes
+  </a>
+</ion-menu-toggle>
+          <button disabled>Solicitudes</button>
+          <button disabled>Aprobaciones</button>
+          <button disabled>Despachos</button>
+          <button disabled>Guías de salida</button>
+          <button disabled>Historial</button>
+
+          <ng-container *ngIf="esAdministrador">
+            <p class="menu-etiqueta">ADMINISTRACIÓN</p>
+
+            <ion-menu-toggle [autoHide]="false">
+              <a
+                routerLink="/principal/administrar-usuarios"
+                routerLinkActive="activo"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                Administrar usuarios
+              </a>
+            </ion-menu-toggle>
+          </ng-container>
+        </nav>
+
+        <div class="menu-pie">
+          <p>STEEL · IEM</p>
+
+          <ion-menu-toggle [autoHide]="false">
+            <button class="salir" (click)="cerrarSesion()">
+              Cerrar sesión
+            </button>
+          </ion-menu-toggle>
+        </div>
+      </div>
+    </ion-content>
+  </ion-menu>
+
+  <div class="ion-page area-principal" id="contenido-principal">
+    <div class="paginas">
+      <ion-router-outlet></ion-router-outlet>
+    </div>
+
+    <nav class="barra-movil" aria-label="Navegación móvil">
+      <a
+        routerLink="/principal/inicio"
+        routerLinkActive="activo"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Inicio
+      </a>
+
+      <button disabled>Sobrantes</button>
+      <button disabled>Solicitudes</button>
+
+      <ion-menu-toggle [autoHide]="false">
+        <button aria-label="Abrir menú de cuenta">
+          Cuenta
+        </button>
+      </ion-menu-toggle>
+    </nav>
+  </div>
+</ion-split-pane>

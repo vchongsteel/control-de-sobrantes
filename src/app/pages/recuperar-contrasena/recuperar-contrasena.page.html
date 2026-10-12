@@ -1,0 +1,49 @@
+<ion-content>
+  <main class="contenedor">
+    <section class="tarjeta" aria-labelledby="titulo">
+      <div class="logos">
+        <img src="assets/Logo/STEEL.jpeg" alt="STEEL" />
+        <img src="assets/Logo/IEM.jpeg" alt="IEM" />
+      </div>
+
+      <h1 id="titulo">Recuperar contraseña</h1>
+
+      <p class="introduccion">
+        Escribe el correo que registraste en tu cuenta
+        para solicitar un enlace de recuperación.
+      </p>
+
+      <form
+        #formulario="ngForm"
+        (ngSubmit)="solicitar(formulario)"
+      >
+        <div class="campo">
+          <label for="correo">Correo electrónico</label>
+          <input
+            id="correo"
+            name="correo"
+            type="email"
+            [(ngModel)]="correo"
+            autocomplete="email"
+            required
+            email
+            maxlength="254"
+            [disabled]="cargando"
+          />
+        </div>
+
+        <button type="submit" [disabled]="cargando">
+          {{ cargando ? 'SOLICITANDO…' : 'SOLICITAR ENLACE' }}
+        </button>
+      </form>
+
+      <p class="mensaje" role="status" [hidden]="!mensaje">
+        {{ mensaje }}
+      </p>
+
+      <a routerLink="/login" class="volver">
+        Volver a iniciar sesión
+      </a>
+    </section>
+  </main>
+</ion-content>

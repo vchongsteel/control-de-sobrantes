@@ -1,0 +1,92 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="/principal/inicio"
+        text=""
+      ></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Administrar usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <main class="usuarios-container">
+    <div class="encabezado">
+      <div>
+        <h1>Cuentas pendientes</h1>
+        <p>Revisa los datos y asigna los roles antes de aprobar.</p>
+      </div>
+
+      <button
+        *ngIf="permitido"
+        type="button"
+        class="actualizar"
+        (click)="cargarPendientes()"
+        [disabled]="cargando || !!aprobandoId"
+      >
+        Actualizar lista
+      </button>
+    </div>
+
+    <p *ngIf="cargando" role="status">Cargando…</p>
+
+    <p *ngIf="mensaje" class="mensaje" role="status">
+      {{ mensaje }}
+    </p>
+
+    <section
+      *ngIf="permitido && !cargando && cuentas.length === 0"
+      class="vacio"
+    >
+      <h2>No hay cuentas pendientes</h2>
+      <p>Las nuevas solicitudes de registro aparecerán aquí.</p>
+    </section>
+
+    <div *ngIf="permitido" class="lista">
+      <article *ngFor="let cuenta of cuentas" class="cuenta">
+        <h2>{{ cuenta.nombre }}</h2>
+
+        <dl>
+          <dt>Usuario</dt>
+          <dd>{{ cuenta.usuario }}</dd>
+
+          <dt>Correo</dt>
+          <dd>{{ cuenta.correo || 'Sin correo registrado' }}</dd>
+        </dl>
+
+        <fieldset [disabled]="cargando || !!aprobandoId">
+          <legend>Roles de esta cuenta</legend>
+
+          <div class="roles">
+            <label *ngFor="let rol of roles">
+              <input
+                type="checkbox"
+                [(ngModel)]="cuenta.seleccion[rol.valor]"
+              />
+              {{ rol.nombre }}
+            </label>
+          </div>
+
+          <p class="aviso">
+            Administrador permite aprobar otras cuentas,
+            asignar roles y administrar el catálogo.
+          </p>
+
+          <button
+            type="button"
+            class="aprobar"
+            (click)="aprobar(cuenta)"
+          >
+            {{
+              aprobandoId === cuenta.id
+                ? 'APROBANDO…'
+                : 'APROBAR CUENTA'
+            }}
+          </button>
+        </fieldset>
+      </article>
+    </div>
+  </main>
+</ion-content>

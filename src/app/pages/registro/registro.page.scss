@@ -1,0 +1,154 @@
+:host {
+  font-family: Arial, sans-serif;
+  color: #17364b;
+}
+
+ion-content {
+  --background: #f4f7fb;
+}
+
+.registro-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  padding: 28px 16px;
+  box-sizing: border-box;
+}
+
+.registro-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  border: 1px solid #e3eaf1;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgb(23 54 75 / 6%);
+  box-sizing: border-box;
+}
+
+.logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.logos img {
+  width: 40%;
+  max-width: 130px;
+  height: 60px;
+  object-fit: contain;
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 28px;
+}
+
+.introduccion {
+  margin-bottom: 24px;
+  color: #68798a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px;
+  border: 1px solid #dbe5ee;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #17364b;
+  font: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: 2px solid #164e78;
+  outline-offset: 2px;
+}
+
+input.ng-touched.ng-invalid {
+  border-color: #b84343;
+}
+
+small {
+  color: #68798a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.boton {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 10px;
+  background: #164e78;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+fieldset:disabled .boton {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.mensaje {
+  padding: 14px;
+  border-radius: 10px;
+  background: #eaf2fa;
+  color: #164e78;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.volver {
+  display: block;
+  margin-top: 22px;
+  color: #164e78;
+  font-size: 13px;
+  text-align: center;
+}
+
+.pie {
+  margin: 24px 0 0;
+  color: #68798a;
+  font-size: 11px;
+  text-align: center;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .registro-card {
+    padding: 24px;
+  }
+}

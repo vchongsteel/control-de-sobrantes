@@ -1,0 +1,98 @@
+<ion-content class="login-page">
+  <main class="login-container">
+    <section class="login-card" aria-labelledby="login-title">
+
+     <div class="company-logos">
+  <img
+    src="/assets/Logo/STEEL.jpeg"
+    alt="STEEL"
+    class="logo-steel"
+  />
+
+  <img
+    src="/assets/Logo/IEM.jpeg"
+    alt="IEM Ingeniería Electromecánica"
+    class="logo-iem"
+  />
+</div>
+
+      <h1 id="login-title">
+         Control<br />
+        de Sobrantes
+      </h1>
+
+      <p class="subtitle">
+        Ingresa para consultar y gestionar los materiales disponibles
+      </p>
+
+      <form (ngSubmit)="iniciarSesion()">
+        <div class="field">
+          <label for="usuario">Usuario</label>
+
+          <input
+            id="usuario"
+            name="usuario"
+            type="text"
+            placeholder="Usuario"
+            autocomplete="username"
+            required
+            [(ngModel)]="usuario"
+          />
+        </div>
+
+        <div class="field">
+          <label for="contrasena">Contraseña</label>
+
+          <div class="password-wrapper">
+            <input
+              id="contrasena"
+              name="contrasena"
+              [type]="mostrarContrasena ? 'text' : 'password'"
+              placeholder="Contraseña"
+              autocomplete="current-password"
+              required
+              [(ngModel)]="contrasena"
+            />
+
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="alternarContrasena()"
+              [attr.aria-pressed]="mostrarContrasena"
+            >
+              {{ mostrarContrasena ? 'Ocultar' : 'Ver' }}
+            </button>
+          </div>
+        </div>
+
+        <p class="recovery-note">
+  <a routerLink="/recuperar-contrasena">
+    ¿Olvidaste tu contraseña?
+  </a>
+</p>
+
+        <button
+  type="submit"
+  class="login-button"
+  [disabled]="cargando"
+>
+  {{ cargando ? 'COMPROBANDO…' : 'INICIAR SESIÓN' }}
+</button> 
+        
+
+        <p class="message" role="status">
+          {{ mensaje }}
+        </p>
+      </form>
+      <p class="registro-enlace">
+  ¿No tienes cuenta?
+  <a routerLink="/registro">Regístrate</a>
+</p>
+
+      <p class="footer-text">
+        © 2026 STEEL · IEM Ingeniería Electromecánica
+      </p>
+
+    </section>
+  </main>
+</ion-content>

@@ -1,0 +1,66 @@
+<ion-content>
+  <main class="contenedor">
+    <section class="tarjeta" aria-labelledby="titulo">
+      <div class="logos">
+        <img src="assets/Logo/STEEL.jpeg" alt="STEEL" />
+        <img src="assets/Logo/IEM.jpeg" alt="IEM" />
+      </div>
+
+      <h1 id="titulo">Nueva contraseña</h1>
+
+      <p class="introduccion">
+        Define una contraseña de al menos 12 caracteres.
+      </p>
+
+      <form
+        #formulario="ngForm"
+        (ngSubmit)="restablecer(formulario)"
+        [hidden]="completado || !tieneToken"
+      >
+        <div class="campo">
+          <label for="contrasena">Nueva contraseña</label>
+          <input
+            id="contrasena"
+            name="contrasena"
+            type="password"
+            [(ngModel)]="contrasena"
+            autocomplete="new-password"
+            required
+            minlength="12"
+            [disabled]="cargando"
+          />
+        </div>
+
+        <div class="campo">
+          <label for="confirmacion">Confirmar contraseña</label>
+          <input
+            id="confirmacion"
+            name="confirmacion"
+            type="password"
+            [(ngModel)]="confirmacion"
+            autocomplete="new-password"
+            required
+            minlength="12"
+            [disabled]="cargando"
+          />
+        </div>
+
+        <button type="submit" [disabled]="cargando">
+          {{ cargando ? 'GUARDANDO…' : 'CAMBIAR CONTRASEÑA' }}
+        </button>
+      </form>
+
+      <p class="mensaje" role="status" [hidden]="!mensaje">
+        {{ mensaje }}
+      </p>
+
+      <a routerLink="/recuperar-contrasena" class="volver">
+        Solicitar otro enlace
+      </a>
+
+      <a routerLink="/login" class="volver">
+        Volver a iniciar sesión
+      </a>
+    </section>
+  </main>
+</ion-content>

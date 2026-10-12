@@ -1,0 +1,114 @@
+<ion-content>
+  <main class="registro-container">
+    <section class="registro-card" aria-labelledby="registro-title">
+      <div class="logos">
+        <img src="assets/Logo/STEEL.jpeg" alt="STEEL" />
+        <img src="assets/Logo/IEM.jpeg" alt="IEM" />
+      </div>
+
+      <h1 id="registro-title">Crear cuenta</h1>
+
+      <p class="introduccion">
+        Registra tus datos. Un administrador revisará
+        tu solicitud y asignará tus permisos.
+      </p>
+
+      <form
+        #formulario="ngForm"
+        (ngSubmit)="registrar(formulario)"
+        [hidden]="registrado"
+      >
+        <fieldset [disabled]="cargando">
+          <div class="campo">
+            <label for="nombre">Nombre completo</label>
+            <input
+              id="nombre"
+              name="nombre"
+              [(ngModel)]="nombre"
+              autocomplete="name"
+              required
+              minlength="2"
+              maxlength="100"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="usuario">Usuario</label>
+            <input
+              id="usuario"
+              name="usuario"
+              [(ngModel)]="usuario"
+              autocomplete="username"
+              required
+              minlength="3"
+              maxlength="50"
+              pattern="[a-zA-Z0-9._-]{3,50}"
+              aria-describedby="ayuda-usuario"
+            />
+            <small id="ayuda-usuario">
+              Usa letras, números, punto, guion o guion bajo.
+            </small>
+          </div>
+
+          <div class="campo">
+            <label for="correo">Correo electrónico</label>
+            <input
+              id="correo"
+              name="correo"
+              type="email"
+              [(ngModel)]="correo"
+              autocomplete="email"
+              required
+              email
+              maxlength="254"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="contrasena">Contraseña</label>
+            <input
+              id="contrasena"
+              name="contrasena"
+              type="password"
+              [(ngModel)]="contrasena"
+              autocomplete="new-password"
+              required
+              minlength="12"
+              aria-describedby="ayuda-contrasena"
+            />
+            <small id="ayuda-contrasena">
+              Usa al menos 12 caracteres.
+            </small>
+          </div>
+
+          <div class="campo">
+            <label for="confirmacion">Confirmar contraseña</label>
+            <input
+              id="confirmacion"
+              name="confirmacion"
+              type="password"
+              [(ngModel)]="confirmarContrasena"
+              autocomplete="new-password"
+              required
+              minlength="12"
+            />
+          </div>
+
+          <button type="submit" class="boton">
+            {{ cargando ? 'REGISTRANDO…' : 'CREAR CUENTA' }}
+          </button>
+        </fieldset>
+      </form>
+
+      <p class="mensaje" role="status" [hidden]="!mensaje">
+        {{ mensaje }}
+      </p>
+
+      <a routerLink="/login" class="volver">
+        Volver a iniciar sesión
+      </a>
+
+      <p class="pie">STEEL · IEM Ingeniería Electromecánica</p>
+    </section>
+  </main>
+</ion-content>

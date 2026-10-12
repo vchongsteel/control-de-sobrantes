@@ -1,0 +1,103 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button menu="menu-principal"></ion-menu-button></ion-buttons>
+    <ion-title>Control de Sobrantes</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <main class="tabla-container">
+    <div class="encabezado">
+      <div><p class="etiqueta">STEEL · IEM</p><h1>Sobrantes registrados</h1><p>Gestión y aprobación de materiales sobrantes</p></div>
+      <a class="boton principal" routerLink="/principal/registrar-sobrante">Registrar sobrante</a>
+    </div>
+    <section class="panel">
+      <div class="panel-encabezado">
+        <h2>Lotes de materiales sobrantes</h2>
+        <div class="herramientas">
+          <label for="estado">Estado</label>
+          <select id="estado" [(ngModel)]="filtroEstado" (ngModelChange)="cambiarFiltro()" [disabled]="cargando || revisando">
+            <option value="">Todos</option><option value="pendiente">Pendientes</option>
+            <option value="aprobado">Aprobados</option><option value="rechazado">Rechazados</option>
+          </select>
+          <button type="button" (click)="cargarSobrantes()" [disabled]="cargando || revisando">Actualizar</button>
+        </div>
+      </div>
+      <p class="nota">Se muestran hasta 100 registros. Solo los aprobados pueden utilizarse en las siguientes etapas.</p>
+      @if (!puedeRevisar && !cargando && !error) {
+        <p class="nota">Puedes consultar los aprobados y tus propios pendientes o rechazados.</p>
+      }
+      @if (mensaje) { <p class="mensaje" role="status">{{ mensaje }}</p> }
+      @if (error) { <p class="error" role="alert">{{ error }}</p> }
+      @if (cargando) { <p class="nota" role="status">Cargando sobrantes…</p> }
+      <div class="tabla-scroll" tabindex="0" role="region" aria-label="Tabla de sobrantes, desplazable horizontalmente">
+        <table>
+          <caption class="solo-lectores">Lotes de materiales sobrantes y su estado de aprobación</caption>
+          <thead><tr>
+            <th scope="col">Lote</th><th scope="col">Material</th><th scope="col">Familia</th>
+            <th scope="col">Foto</th><th scope="col">Cantidad</th><th scope="col">Unidad</th>
+            <th scope="col">Ubicación</th><th scope="col">Aprobación</th><th scope="col">Acción</th>
+          </tr></thead>
+          <tbody>
+            @for (sobrante of sobrantes; track sobrante.id) {
+              <tr>
+                <th scope="row" class="lote">{{ sobrante.codigo_lote }}</th>
+                <td class="material"><strong>{{ sobrante.descripcion }}</strong><small>{{ sobrante.codigo }} · {{ sobrante.tipo }}</small></td>
+                <td>{{ sobrante.familia }}</td>
+                <td>
+                  @if (fotos[sobrante.id]) {
+                    <button type="button" class="miniatura" (click)="abrirDetalle(sobrante)" [disabled]="revisando" [attr.aria-label]="'Ver fotografía de ' + sobrante.codigo_lote">
+                      <img [src]="fotos[sobrante.id]" [alt]="sobrante.descripcion" />
+                    </button>
+                  } @else if (!sobrante.foto_nombre) { <span class="nota">Sin foto</span>
+                  } @else if (fotosFallidas[sobrante.id]) { <span class="nota">Foto no disponible</span>
+                  } @else { <span class="nota">Cargando…</span> }
+                </td>
+                <td class="numero">{{ sobrante.cantidad | number:'1.0-3' }}</td><td>{{ sobrante.unidad }}</td>
+                <td>{{ sobrante.ubicacion }}</td>
+                <td><span class="estado" [class.aprobado]="sobrante.estado === 'aprobado'" [class.pendiente]="sobrante.estado === 'pendiente'" [class.rechazado]="sobrante.estado === 'rechazado'">{{ sobrante.estado }}</span></td>
+                <td><button type="button" class="principal" (click)="abrirDetalle(sobrante)" [disabled]="revisando">
+                  {{ puedeRevisar && sobrante.estado === 'pendiente' ? 'Revisar' : 'Ver detalle' }}
+                </button></td>
+              </tr>
+            }
+            @if (!cargando && !error && sobrantes.length === 0) {
+              <tr><td colspan="9" class="vacio">No hay sobrantes con estos filtros.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+    @if (seleccionado; as detalle) {
+      <section #panelDetalle class="panel detalle" tabindex="-1" aria-labelledby="detalle-title">
+        <div class="panel-encabezado">
+          <h2 id="detalle-title">{{ detalle.codigo_lote }} · {{ detalle.descripcion }}</h2>
+          <button type="button" (click)="cerrarDetalle()" [disabled]="revisando">Cerrar detalle</button>
+        </div>
+        @if (fotos[detalle.id]) { <img class="foto-detalle" [src]="fotos[detalle.id]" [alt]="detalle.descripcion" /> }
+        <dl>
+          <div><dt>Código del material</dt><dd>{{ detalle.codigo }}</dd></div>
+          <div><dt>Cantidad</dt><dd>{{ detalle.cantidad | number:'1.0-3' }} {{ detalle.unidad }}</dd></div>
+          <div><dt>Ubicación</dt><dd>{{ detalle.ubicacion }}</dd></div>
+          <div><dt>Registrado por</dt><dd>{{ detalle.registrado_por }}</dd></div>
+          <div><dt>Fecha de registro</dt><dd>{{ detalle.creado_en | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+          <div><dt>Estado</dt><dd>{{ detalle.estado }}</dd></div>
+          @if (detalle.observaciones) { <div><dt>Observaciones</dt><dd class="texto-largo">{{ detalle.observaciones }}</dd></div> }
+          @if (detalle.revisado_por) { <div><dt>Revisado por</dt><dd>{{ detalle.revisado_por }}</dd></div> }
+          @if (detalle.revisado_en) { <div><dt>Fecha de revisión (UTC)</dt><dd>{{ detalle.revisado_en | date:'dd/MM/yyyy HH:mm':'UTC' }}</dd></div> }
+          @if (detalle.motivo_rechazo) { <div><dt>Motivo del rechazo</dt><dd class="texto-largo">{{ detalle.motivo_rechazo }}</dd></div> }
+        </dl>
+        @if (puedeRevisar && detalle.estado === 'pendiente') {
+          <div class="revision">
+            <label for="motivo">Motivo del rechazo (obligatorio si rechazas)</label>
+            <textarea id="motivo" [(ngModel)]="motivo" maxlength="1000" rows="3" [disabled]="revisando"></textarea>
+            <div class="revision-acciones">
+              <button type="button" class="principal" (click)="revisar('aprobado')" [disabled]="revisando">Aprobar sobrante</button>
+              <button type="button" class="rechazar" (click)="revisar('rechazado')" [disabled]="revisando">Rechazar sobrante</button>
+            </div>
+            @if (revisando) { <p role="status">Guardando revisión…</p> }
+          </div>
+        }
+      </section>
+    }
+  </main>
+</ion-content>

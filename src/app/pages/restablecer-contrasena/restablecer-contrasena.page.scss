@@ -1,0 +1,133 @@
+:host {
+  font-family: Arial, sans-serif;
+  color: #17364b;
+}
+
+ion-content {
+  --background: #f4f7fb;
+}
+
+.contenedor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 28px 16px;
+  box-sizing: border-box;
+}
+
+.tarjeta {
+  width: 100%;
+  max-width: 460px;
+  padding: 32px;
+  border: 1px solid #e3eaf1;
+  border-radius: 20px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.logos img {
+  width: 40%;
+  max-width: 130px;
+  height: 60px;
+  object-fit: contain;
+}
+
+h1 {
+  margin: 0 0 14px;
+  font-size: 26px;
+}
+
+.introduccion {
+  margin-bottom: 24px;
+  color: #68798a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px;
+  border: 1px solid #dbe5ee;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #17364b;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+input.ng-touched.ng-invalid {
+  border-color: #b84343;
+}
+
+button {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 10px;
+  background: #164e78;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #164e78;
+  outline-offset: 3px;
+}
+
+.mensaje {
+  padding: 14px;
+  border-radius: 10px;
+  background: #eaf2fa;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.volver {
+  display: block;
+  margin-top: 20px;
+  color: #164e78;
+  font-size: 13px;
+  text-align: center;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .tarjeta {
+    padding: 24px;
+  }
+}

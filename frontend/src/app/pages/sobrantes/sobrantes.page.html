@@ -1,0 +1,526 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="menu-principal"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Control de Sobrantes</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <main class="tabla-container">
+    <div class="encabezado">
+      <div>
+        <p class="etiqueta">STEEL · IEM</p>
+        <h1>Sobrantes registrados</h1>
+        <p>Gestión y aprobación de materiales sobrantes</p>
+      </div>
+      <a class="boton principal" routerLink="/principal/registrar-sobrante">
+        Registrar sobrante
+      </a>
+    </div>
+    <section class="panel">
+      <div class="panel-encabezado">
+        <h2>Lotes de materiales sobrantes</h2>
+        <div class="herramientas">
+          <label for="estado">Estado</label>
+          <select
+            id="estado"
+            [(ngModel)]="filtroEstado"
+            (ngModelChange)="cambiarFiltro()"
+            [disabled]="cargando || ocupado || (hayCambios && !conflicto)"
+          >
+            <option value="">Todos</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="aprobado">Aprobados</option>
+            <option value="rechazado">Rechazados</option>
+          </select>
+          <button
+            type="button"
+            (click)="cargarSobrantes()"
+            [disabled]="cargando || ocupado || (hayCambios && !conflicto)"
+          >
+            Actualizar
+          </button>
+        </div>
+      </div>
+      <p class="nota">
+        Se muestran hasta 100 registros. Solo los aprobados pueden utilizarse en las siguientes etapas.
+      </p>
+      @if (!puedeRevisar && !cargando && !error) {
+        <p class="nota">
+          Puedes consultar los aprobados y tus propios pendientes o rechazados.
+        </p>
+      }
+      @if (mensaje) {
+        <p class="mensaje" role="status">{{ mensaje }}</p>
+      }
+      @if (error) {
+        <p class="error" role="alert">{{ error }}</p>
+      }
+      @if (cargando) {
+        <p class="nota" role="status">Cargando sobrantes…</p>
+      }
+      <div
+        class="tabla-scroll"
+        tabindex="0"
+        role="region"
+        aria-label="Tabla de sobrantes, desplazable horizontalmente"
+      >
+        <table>
+          <caption class="solo-lectores">
+            Lotes de materiales sobrantes y su estado de aprobación
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Lote</th>
+              <th scope="col">Material</th>
+              <th scope="col">Familia</th>
+              <th scope="col">Foto</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Unidad</th>
+              <th scope="col">Ubicación</th>
+              <th scope="col">Aprobación</th>
+              <th scope="col">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (sobrante of sobrantes; track sobrante.id) {
+              <tr>
+                <th scope="row" class="lote">
+                  {{ sobrante.codigo_lote }}
+                </th>
+                <td class="material">
+                  <strong>{{ sobrante.descripcion }}</strong>
+                  <small>{{ sobrante.codigo }} · {{ sobrante.tipo }}</small>
+                </td>
+                <td>{{ sobrante.familia }}</td>
+                <td>
+                  @if (fotos[sobrante.id]) {
+                    <button
+                      type="button"
+                      class="miniatura"
+                      (click)="abrirDetalle(sobrante)"
+                      [disabled]="ocupado"
+                      [attr.aria-label]="'Ver fotografía de ' + sobrante.codigo_lote"
+                    >
+                      <img
+                        [src]="fotos[sobrante.id]"
+                        [alt]="sobrante.descripcion"
+                      />
+                    </button>
+                  } @else if (!sobrante.foto_nombre) {
+                    <span class="nota">Sin foto</span>
+                  } @else if (fotosFallidas[sobrante.id]) {
+                    <span class="nota">Foto no disponible</span>
+                  } @else {
+                    <span class="nota">Cargando…</span>
+                  }
+                </td>
+                <td class="numero">
+                  {{ sobrante.cantidad | number:'1.0-3' }}
+                </td>
+                <td>{{ sobrante.unidad }}</td>
+                <td>{{ sobrante.ubicacion }}</td>
+                <td>
+                  <span
+                    class="estado"
+                    [class.aprobado]="sobrante.estado === 'aprobado'"
+                    [class.pendiente]="sobrante.estado === 'pendiente'"
+                    [class.rechazado]="sobrante.estado === 'rechazado'"
+                  >
+                    {{ sobrante.estado }}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="principal"
+                    (click)="abrirDetalle(sobrante)"
+                    [disabled]="ocupado"
+                  >
+                    {{
+                      puedeRevisar && sobrante.estado === 'pendiente'
+                        ? 'Revisar'
+                        : 'Ver detalle'
+                    }}
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (!cargando && !error && sobrantes.length === 0) {
+              <tr>
+                <td colspan="9" class="vacio">
+                  No hay sobrantes con estos filtros.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+    @if (seleccionado; as detalle) {
+      <section
+        #panelDetalle
+        class="panel detalle"
+        tabindex="-1"
+        aria-labelledby="detalle-title"
+      >
+        <div class="panel-encabezado">
+          <h2 id="detalle-title">
+            {{ detalle.codigo_lote }} · {{ detalle.descripcion }}
+          </h2>
+          <button
+            type="button"
+            (click)="cerrarDetalle()"
+            [disabled]="ocupado"
+          >
+            Cerrar detalle
+          </button>
+        </div>
+        @if (fotos[detalle.id]) {
+          <img
+            class="foto-detalle"
+            [src]="fotos[detalle.id]"
+            [alt]="detalle.descripcion"
+          />
+        } @else if (detalle.foto_nombre && fotosFallidas[detalle.id]) {
+          <p class="nota">No se pudo cargar la fotografía.</p>
+        }
+        <dl>
+          <div>
+            <dt>Código del material</dt>
+            <dd>{{ detalle.codigo }}</dd>
+          </div>
+          <div>
+            <dt>Cantidad guardada</dt>
+            <dd>{{ detalle.cantidad | number:'1.0-3' }} {{ detalle.unidad }}</dd>
+          </div>
+          <div><dt>¿El artículo está completo?</dt><dd>{{ detalle.articulo_completo === 1 ? 'Sí' : detalle.articulo_completo === 0 ? 'No' : 'Sin definir' }}</dd></div>
+          <div>
+            <dt>Ubicación guardada</dt>
+            <dd>{{ detalle.ubicacion }}</dd>
+          </div>
+          <div>
+            <dt>Registrado por</dt>
+            <dd>{{ detalle.registrado_por }}</dd>
+          </div>
+          <div>
+            <dt>Fecha de registro</dt>
+            <dd>{{ detalle.creado_en | date:'dd/MM/yyyy HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>Estado</dt>
+            <dd>{{ detalle.estado }}</dd>
+          </div>
+          @if (detalle.descripcion_manual) {
+            <div>
+              <dt>Descripción manual de referencia</dt>
+              <dd class="texto-largo">{{ detalle.descripcion_manual }}</dd>
+            </div>
+          }
+          @if (detalle.observaciones) {
+            <div>
+              <dt>Observaciones guardadas</dt>
+              <dd class="texto-largo">{{ detalle.observaciones }}</dd>
+            </div>
+          }
+          @if (detalle.revisado_por) {
+            <div>
+              <dt>Revisado por</dt>
+              <dd>{{ detalle.revisado_por }}</dd>
+            </div>
+          }
+          @if (detalle.revisado_en) {
+            <div>
+              <dt>Fecha de revisión (UTC)</dt>
+              <dd>{{ detalle.revisado_en | date:'dd/MM/yyyy HH:mm':'UTC' }}</dd>
+            </div>
+          }
+          @if (detalle.motivo_rechazo) {
+            <div>
+              <dt>Motivo del rechazo</dt>
+              <dd class="texto-largo">{{ detalle.motivo_rechazo }}</dd>
+            </div>
+          }
+        </dl>
+        @if (mensajeDetalle) {
+          <p class="mensaje" role="status">{{ mensajeDetalle }}</p>
+        }
+        @if (errorDetalle) {
+          <p class="error" role="alert">{{ errorDetalle }}</p>
+        }
+        @if (conflicto) {
+          <button
+            type="button"
+            (click)="cargarSobrantes()"
+            [disabled]="ocupado"
+          >
+            Actualizar datos del servidor
+          </button>
+        }
+        @if (editable) {
+          @if (edicion; as datos) {
+            <div class="edicion-panel">
+              <h3>Corregir e identificar el material</h3>
+              <p class="nota">
+                Los cambios afectan a este lote. El catálogo maestro conserva sus datos.
+              </p>
+              @if (materialElegido; as material) {
+                <div class="material-asignado">
+                  <strong>{{ material.codigo }}</strong>
+                  <p>{{ material.descripcion }}</p>
+                  <small>{{ material.familia }} · {{ material.tipo }}</small>
+                </div>
+                <button
+                  type="button"
+                  (click)="dejarSinIdentificar()"
+                  [disabled]="ocupado || conflicto"
+                >
+                  Dejar pendiente de identificación
+                </button>
+              } @else {
+                <p class="nota">
+                  Este lote todavía no tiene un material de catálogo asignado.
+                </p>
+              }
+              <div class="campo-edicion">
+                <label for="buscar-material">
+                  Buscar un material por descripción o código
+                </label>
+                <input
+                  id="buscar-material"
+                  [(ngModel)]="buscar"
+                  (ngModelChange)="cambiarBusqueda()"
+                  maxlength="200"
+                  placeholder="Ejemplo: tubo metálico o cable"
+                  [disabled]="ocupado || conflicto"
+                  (keydown.enter)="$event.preventDefault(); buscarMateriales()"
+                />
+                <button
+                  type="button"
+                  (click)="buscarMateriales()"
+                  [disabled]="buscando || ocupado || conflicto"
+                >
+                  {{ buscando ? 'Buscando…' : 'Buscar en el catálogo' }}
+                </button>
+              </div>
+              @if (errorBusqueda) {
+                <p class="error" role="alert">{{ errorBusqueda }}</p>
+              }
+              @if (busquedaRealizada && totalBusqueda === 0) {
+                <p class="nota">
+                  No se encontraron materiales. Puedes guardar la descripción manual y mantener el lote pendiente.
+                </p>
+              }
+              @if (busquedaRealizada && totalBusqueda > 0) {
+                <p class="nota">
+                  {{ totalBusqueda }} materiales encontrados. Elige el que corresponde:
+                </p>
+                <div class="resultados-catalogo">
+                  @for (material of resultados; track material.id) {
+                    <button
+                      type="button"
+                      class="resultado-catalogo"
+                      [class.elegido]="datos.materialId === material.id"
+                      [attr.aria-pressed]="datos.materialId === material.id"
+                      (click)="elegirMaterial(material)"
+                      [disabled]="ocupado || conflicto"
+                    >
+                      <strong>{{ material.codigo }}</strong>
+                      <span>{{ material.descripcion }}</span>
+                      <small>{{ material.familia }} · {{ material.tipo }}</small>
+                    </button>
+                  }
+                </div>
+                <div class="revision-acciones">
+                  <button
+                    type="button"
+                    (click)="buscarMateriales(paginaBusqueda - 1)"
+                    [disabled]="paginaBusqueda <= 1 || buscando || ocupado || conflicto"
+                  >
+                    Anterior
+                  </button>
+                  <span>Página {{ paginaBusqueda }} de {{ totalPaginasBusqueda }}</span>
+                  <button
+                    type="button"
+                    (click)="buscarMateriales(paginaBusqueda + 1)"
+                    [disabled]="paginaBusqueda >= totalPaginasBusqueda || buscando || ocupado || conflicto"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              }
+              <form (ngSubmit)="guardarCambios()">
+                <div class="campos-edicion">
+                  @if (!datos.materialId) {
+                    <div class="campo-edicion ancho-edicion">
+                      <label for="descripcion-edicion">Descripción manual *</label>
+                      <textarea
+                        id="descripcion-edicion"
+                        name="descripcionManual"
+                        [(ngModel)]="datos.descripcionManual"
+                        required
+                        minlength="3"
+                        maxlength="500"
+                        rows="3"
+                        [disabled]="ocupado || conflicto"
+                      ></textarea>
+                    </div>
+                  }
+                  <div class="campo-edicion">
+                    <label for="cantidad-edicion">Cantidad *</label>
+                    <input
+                      id="cantidad-edicion"
+                      name="cantidad"
+                      type="number"
+                      [(ngModel)]="datos.cantidad"
+                      required
+                      min="0.001"
+                      max="999999999999.999"
+                      step="0.001"
+                      [disabled]="ocupado || conflicto"
+                    />
+                  </div>
+                  <div class="campo-edicion">
+                    <label for="unidad-edicion">Unidad *</label>
+                    <select
+                      id="unidad-edicion"
+                      name="unidad"
+                      [(ngModel)]="datos.unidad"
+                      required
+                      [disabled]="ocupado || conflicto"
+                    >
+                      @if (datos.unidad && !unidadesPermitidas.includes(datos.unidad)) {
+                        <option [value]="datos.unidad" disabled>{{ nombreUnidad(datos.unidad) }} · revisar unidad</option>
+                      }
+                      <option value="" disabled>Selecciona una unidad</option>
+                      @for (u of unidadesPermitidas; track u) { <option [value]="u">{{ nombreUnidad(u) }}</option> }
+                    </select>
+                  </div>
+                  <div class="campo-edicion">
+                    <label for="zona-edicion">Zona *</label>
+                    <select id="zona-edicion" name="zonaEdicion" [(ngModel)]="zonaEdicion"
+                      (ngModelChange)="cambiarZonaEdicion()" required [disabled]="ocupado || conflicto">
+                      <option value="" disabled>Selecciona una zona</option>
+                      @for (zona of zonas; track zona) { <option [value]="zona">{{ zona }}</option> }
+                    </select>
+                  </div>
+                  <div class="campo-edicion">
+                    <label for="ubicacion-edicion">Ubicación *</label>
+                    <select id="ubicacion-edicion" name="ubicacionId" [(ngModel)]="datos.ubicacionId" required [disabled]="ocupado || conflicto || !zonaEdicion">
+                      <option [ngValue]="null" disabled>Selecciona una ubicación</option>
+                      @for (lugar of ubicacionesZona; track lugar.id) { <option [ngValue]="lugar.id">{{ lugar.ubicacion }}</option> }
+                    </select>
+                    @if (errorUbicaciones) {
+                      <p class="error">{{ errorUbicaciones }}</p>
+                      <button type="button" (click)="cargarUbicaciones()" [disabled]="ocupado">Reintentar ubicaciones</button>
+                    }
+                  </div>
+                  <div class="campo-edicion">
+                    <label for="completo-edicion">¿El artículo está completo? *</label>
+                    <select id="completo-edicion" name="articuloCompleto" [(ngModel)]="datos.articuloCompleto" required [disabled]="ocupado || conflicto">
+                      <option [ngValue]="null" disabled>Selecciona una opción</option>
+                      <option [ngValue]="1">Sí</option><option [ngValue]="0">No</option>
+                    </select>
+                  </div>
+                  @if (cargandoUnidades) { <p role="status">Cargando unidades…</p> }
+                  @if (errorUnidades) {
+                    <div class="campo-edicion ancho-edicion">
+                      <p class="error">{{ errorUnidades }}</p>
+                      <button type="button" (click)="cargarUnidadesEdicion()" [disabled]="ocupado || conflicto || cargandoUnidades">Reintentar unidades</button>
+                    </div>
+                  }
+                  <div class="campo-edicion ancho-edicion">
+                    <label for="observaciones-edicion">Observaciones</label>
+                    <textarea
+                      id="observaciones-edicion"
+                      name="observaciones"
+                      [(ngModel)]="datos.observaciones"
+                      maxlength="1000"
+                      rows="3"
+                      [disabled]="ocupado || conflicto"
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="revision-acciones">
+                  <button
+                    type="submit"
+                    class="principal"
+                    [disabled]="ocupado || conflicto || !hayCambios"
+                  >
+                    {{ guardandoCambios ? 'Guardando…' : 'Guardar cambios' }}
+                  </button>
+                  <button
+                    type="button"
+                    (click)="descartarCambios()"
+                    [disabled]="ocupado || !hayCambios"
+                  >
+                    Descartar cambios
+                  </button>
+                </div>
+                @if (hayCambios) {
+                  <p class="nota">
+                    Hay cambios sin guardar. Guárdalos o descártalos antes de revisar.
+                  </p>
+                }
+              </form>
+            </div>
+            <div class="revision">
+              <h3>Aprobar o rechazar</h3>
+              @if (!detalle.material_id) {
+                <p class="nota">
+                  Para aprobar, primero asigna un material del catálogo y guarda los cambios.
+                </p>
+              }
+              <label for="motivo">Motivo del rechazo (obligatorio si rechazas)</label>
+              <textarea
+                id="motivo"
+                [(ngModel)]="motivo"
+                maxlength="1000"
+                rows="3"
+                [disabled]="ocupado || conflicto"
+              ></textarea>
+              <div class="revision-acciones">
+                <button
+                  type="button"
+                  class="principal"
+                  (click)="revisar('aprobado')"
+                  [disabled]="ocupado || conflicto || hayCambios || !detalle.material_id"
+                >
+                  Aprobar sobrante
+                </button>
+                <button
+                  type="button"
+                  class="rechazar"
+                  (click)="revisar('rechazado')"
+                  [disabled]="ocupado || conflicto || hayCambios"
+                >
+                  Rechazar sobrante
+                </button>
+              </div>
+              @if (revisando) {
+                <p role="status">Guardando revisión…</p>
+              }
+            </div>
+          }
+        }
+        @if (puedeRevisar) {
+          <div class="eliminar-detalle">
+            <button
+              type="button"
+              class="boton-eliminar-detalle"
+              (click)="eliminar(detalle)"
+              [disabled]="ocupado || hayCambios || conflicto"
+              [attr.aria-label]="'Eliminar sobrante ' + detalle.codigo_lote"
+            >
+              {{ eliminandoId === detalle.id ? 'Eliminando…' : 'Eliminar sobrante' }}
+            </button>
+            @if (hayCambios) {
+              <small>Guarda o descarta los cambios antes de eliminar.</small>
+            }
+          </div>
+        }
+      </section>
+    }
+  </main>
+</ion-content>

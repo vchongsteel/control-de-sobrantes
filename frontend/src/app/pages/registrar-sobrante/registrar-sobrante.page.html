@@ -1,0 +1,360 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="/principal/inicio"
+        text=""
+        [disabled]="guardando"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registrar sobrante</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <main class="registro-container">
+    <div class="presentacion">
+      <p class="etiqueta">GESTIÓN DE MATERIALES</p>
+      <h1>Registrar sobrante</h1>
+      <p>
+        Busca el material en el catálogo. Si no lo encuentras,
+        puedes describirlo y registrarlo para identificarlo después.
+      </p>
+    </div>
+    <form
+      #formulario="ngForm"
+      (ngSubmit)="revisarDatos(formulario)"
+      [attr.aria-busy]="guardando"
+    >
+      <section class="panel">
+        <h2>1. Identificar el material</h2>
+        <div class="opciones-registro">
+          <button
+            type="button"
+            [class.modo-activo]="modo === 'catalogo'"
+            [attr.aria-pressed]="modo === 'catalogo'"
+            [disabled]="guardando || guardado"
+            (click)="cambiarModo('catalogo')"
+          >
+            Buscar en el catálogo
+          </button>
+          <button
+            type="button"
+            [class.modo-activo]="modo === 'manual'"
+            [attr.aria-pressed]="modo === 'manual'"
+            [disabled]="guardando || guardado"
+            (click)="cambiarModo('manual')"
+          >
+            No encuentro el material
+          </button>
+        </div>
+        @if (modo === 'catalogo') {
+          <p class="indicacion">
+            Busca por descripción o utiliza los filtros de familia y tipo.
+            No necesitas conocer el código.
+          </p>
+          <div class="filtros">
+            <div class="campo">
+              <label for="familia">Familia</label>
+              <select
+                id="familia"
+                name="familia"
+                [(ngModel)]="familia"
+                (ngModelChange)="cambiarFamilia()"
+                [disabled]="cargandoFamilias || guardando || guardado"
+              >
+                <option value="">Todas las familias</option>
+                @for (opcion of familias; track opcion.id) {
+                  <option [value]="opcion.codigo">
+                    {{ opcion.nombre }}
+                  </option>
+                }
+              </select>
+            </div>
+            <div class="campo">
+              <label for="tipo">Tipo</label>
+              <select
+                id="tipo"
+                name="tipo"
+                [(ngModel)]="tipo"
+                (ngModelChange)="cambiarTipo()"
+                [disabled]="cargandoTipos || guardando || guardado"
+              >
+                <option value="">Todos los tipos</option>
+                @for (opcion of tipos; track opcion) {
+                  <option [value]="opcion">{{ opcion }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="campo busqueda-descripcion">
+            <label for="buscar">Buscar por descripción</label>
+            <input
+              id="buscar"
+              name="buscar"
+              [(ngModel)]="buscar"
+              (ngModelChange)="cambiarTexto()"
+              maxlength="200"
+              placeholder="Ejemplo: cable HDMI, tubo o acople"
+              [readonly]="guardando || guardado"
+              (keydown.enter)="$event.preventDefault(); buscarMateriales()"
+            />
+            <small>
+              Para buscar en todo el catálogo, deja los filtros en “Todos”.
+            </small>
+          </div>
+          <div class="buscar-acciones">
+            <button
+              type="button"
+              (click)="buscarMateriales()"
+              [disabled]="cargandoMateriales || guardando || guardado"
+            >
+              {{ cargandoMateriales ? 'Buscando…' : 'Buscar materiales' }}
+            </button>
+          </div>
+          @if (errorCatalogo) {
+            <p class="error" role="alert">{{ errorCatalogo }}</p>
+          }
+          @if (cargandoMateriales) {
+            <p class="indicacion" role="status">
+              Cargando materiales…
+            </p>
+          }
+          @if (consultaRealizada && total === 0) {
+            <p class="mensaje" role="status">
+              No se encontraron materiales. Puedes cambiar los filtros
+              o elegir “No encuentro el material”.
+            </p>
+          }
+          @if (consultaRealizada && total > 0 && !guardado) {
+            <p class="resumen-resultados">
+              {{ total }} materiales encontrados. Selecciona uno:
+            </p>
+            <div class="resultados">
+              @for (opcion of materiales; track opcion.id) {
+                <button
+                  type="button"
+                  class="resultado"
+                  [class.seleccionado]="seleccionado?.id === opcion.id"
+                  [attr.aria-pressed]="seleccionado?.id === opcion.id"
+                  [disabled]="guardando"
+                  (click)="seleccionarMaterial(opcion)"
+                >
+                  <strong>{{ opcion.codigo }}</strong>
+                  <span>{{ opcion.descripcion }}</span>
+                  <small>
+                    {{ opcion.familia }} · {{ opcion.tipo }}
+                  </small>
+                </button>
+              }
+            </div>
+            <div class="paginacion">
+              <button
+                type="button"
+                (click)="buscarMateriales(pagina - 1)"
+                [disabled]="pagina <= 1 || cargandoMateriales || guardando"
+              >
+                Anterior
+              </button>
+              <span>Página {{ pagina }} de {{ totalPaginas }}</span>
+              <button
+                type="button"
+                (click)="buscarMateriales(pagina + 1)"
+                [disabled]="pagina >= totalPaginas || cargandoMateriales || guardando"
+              >
+                Siguiente
+              </button>
+            </div>
+          }
+          @if (seleccionado) {
+            <div class="material-elegido" role="status">
+              <p class="etiqueta">MATERIAL SELECCIONADO</p>
+              <strong>{{ seleccionado.codigo }}</strong>
+              <p>{{ seleccionado.descripcion }}</p>
+              <small>
+                {{ seleccionado.familia }} · {{ seleccionado.tipo }}
+              </small>
+            </div>
+          }
+        } @else {
+          <div class="aviso-manual">
+            No necesitas un código de catálogo para registrar este ingreso.
+            El material quedará pendiente de identificación y revisión.
+          </div>
+          <div class="campo">
+            <label for="descripcionManual">
+              Descripción del material *
+            </label>
+            <textarea
+              id="descripcionManual"
+              name="descripcionManual"
+              [(ngModel)]="descripcionManual"
+              required
+              minlength="3"
+              maxlength="500"
+              rows="4"
+              placeholder="Ejemplo: tubo metálico sin etiqueta, aproximadamente 2 metros de largo."
+              [readonly]="guardando || guardado"
+              aria-describedby="ayuda-descripcion"
+            ></textarea>
+            <small id="ayuda-descripcion">
+              Describe lo que reconoces: nombre, color, medidas,
+              marca u otras características.
+            </small>
+          </div>
+        }
+      </section>
+      <section class="panel">
+        <h2>2. Datos del sobrante</h2>
+        <p class="indicacion">Los campos con * son obligatorios.</p>
+        <div class="campos">
+          <div class="campo">
+            <label for="cantidad">Cantidad *</label>
+            <input
+              id="cantidad"
+              name="cantidad"
+              type="number"
+              [(ngModel)]="cantidad"
+              required
+              min="0.001"
+              max="999999999999.999"
+              step="0.001"
+              placeholder="Ejemplo: 15"
+              [readonly]="guardando || guardado"
+            />
+          </div>
+          <div class="campo">
+            <label for="unidad">Unidad de medida *</label>
+            <select
+              id="unidad"
+              name="unidad"
+              [(ngModel)]="unidad"
+              required
+              [disabled]="guardando || guardado || cargandoUnidades || unidadesPermitidas.length === 0"
+            >
+              <option value="" disabled>Selecciona una unidad</option>
+              @for (opcion of unidadesPermitidas; track opcion) {
+                <option [value]="opcion">{{ nombreUnidad(opcion) }}</option>
+              }
+            </select>
+          </div>
+          <div class="campo">
+            <label for="zona">Zona *</label>
+            <select id="zona" name="zona" [(ngModel)]="zona" (ngModelChange)="cambiarZona()"
+              required [disabled]="guardando || guardado || cargandoUbicaciones">
+              <option value="" disabled>Selecciona una zona</option>
+              @for (opcion of zonas; track opcion) { <option [value]="opcion">{{ opcion }}</option> }
+            </select>
+          </div>
+          <div class="campo">
+            <label for="ubicacion">Ubicación *</label>
+            <select id="ubicacion" name="ubicacionId" [(ngModel)]="ubicacionId"
+              required [disabled]="guardando || guardado || cargandoUbicaciones || !zona">
+              <option [ngValue]="null" disabled>Selecciona una ubicación</option>
+              @for (lugar of ubicacionesZona; track lugar.id) {
+                <option [ngValue]="lugar.id">{{ lugar.ubicacion }}</option>
+              }
+            </select>
+            <small>Primero selecciona la zona. Para material sin acomodar: Recepción temporal → General.</small>
+            @if (errorUbicaciones) {
+              <p class="error" role="alert">{{ errorUbicaciones }}</p>
+              <button type="button" (click)="cargarUbicaciones()" [disabled]="guardando || guardado || cargandoUbicaciones">Reintentar ubicaciones</button>
+            }
+          </div>
+          <div class="campo">
+            <label for="completo">¿El artículo está completo? *</label>
+            <select id="completo" name="articuloCompleto" [(ngModel)]="articuloCompleto"
+              required [disabled]="guardando || guardado">
+              <option [ngValue]="null" disabled>Selecciona una opción</option>
+              <option [ngValue]="1">Sí</option>
+              <option [ngValue]="0">No</option>
+            </select>
+          </div>
+          @if (cargandoUnidades) { <p role="status">Cargando unidades…</p> }
+          @if (errorUnidades) {
+            <div class="campo ancho-completo">
+              <p class="error" role="alert">{{ errorUnidades }}</p>
+              <button type="button" (click)="cargarUnidades()" [disabled]="guardando || guardado || cargandoUnidades">Reintentar unidades</button>
+            </div>
+          }
+          <div class="campo ancho-completo">
+            <label for="observaciones">Observaciones</label>
+            <textarea
+              id="observaciones"
+              name="observaciones"
+              [(ngModel)]="observaciones"
+              maxlength="1000"
+              rows="4"
+              placeholder="Indica condiciones u otros detalles."
+              [readonly]="guardando || guardado"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Fotografía del material</h2>
+        <p class="indicacion">
+          Opcional. JPG, PNG o WEBP de hasta 5 MB.
+          La foto ayuda a identificar el material durante la revisión.
+        </p>
+        <label class="selector-foto" for="foto">
+          <span>Seleccionar fotografía</span>
+          <input
+            #inputFoto
+            id="foto"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="seleccionarFoto($event)"
+            [disabled]="guardando || guardado"
+          />
+        </label>
+        @if (errorFoto) {
+          <p class="error" role="alert">{{ errorFoto }}</p>
+        }
+        @if (vistaFoto) {
+          <div class="vista-foto">
+            <img
+              [src]="vistaFoto"
+              alt="Vista previa del material"
+            />
+            <p>{{ foto?.name }}</p>
+            @if (!guardado) {
+              <button
+                type="button"
+                class="eliminar-foto"
+                (click)="eliminarFoto(inputFoto)"
+                [disabled]="guardando"
+              >
+                Eliminar imagen
+              </button>
+            }
+          </div>
+        }
+      </section>
+      @if (mensaje) {
+        <p class="mensaje" role="status">{{ mensaje }}</p>
+      }
+      @if (guardado && codigoLote) {
+        <p class="mensaje">
+          Código del lote: <strong>{{ codigoLote }}</strong>
+        </p>
+      }
+      <div class="acciones">
+        @if (!guardado) {
+          <button
+            type="submit"
+            [disabled]="guardando"
+          >
+            {{ guardando ? 'Guardando…' : 'Registrar sobrante' }}
+          </button>
+        } @else {
+          <button
+            type="button"
+            (click)="nuevoRegistro(formulario, inputFoto)"
+          >
+            Registrar otro sobrante
+          </button>
+        }
+      </div>
+    </form>
+  </main>
+</ion-content>

@@ -466,7 +466,7 @@
               </form>
             </div>
             <div class="revision">
-              <h3>Aprobar </h3>
+            
               @if (!detalle.material_id) {
                 <p class="nota">
                   Para aprobar, primero asigna un material del catálogo y guarda los cambios.
@@ -481,7 +481,15 @@
                   [disabled]="ocupado || conflicto || hayCambios || !detalle.material_id"
                 >
                   Aprobar sobrante
-                </button>
+                </button><button
+              type="button"
+              class="boton-eliminar-detalle"
+              (click)="eliminar(detalle)"
+              [disabled]="ocupado || hayCambios || conflicto"
+              [attr.aria-label]="'Eliminar sobrante ' + detalle.codigo_lote"
+            >
+              {{ eliminandoId === detalle.id ? 'Eliminando…' : 'Eliminar sobrante' }}
+            </button>
                 
               </div>
               @if (revisando) {
@@ -492,15 +500,7 @@
         }
         @if (puedeRevisar) {
           <div class="eliminar-detalle">
-            <button
-              type="button"
-              class="boton-eliminar-detalle"
-              (click)="eliminar(detalle)"
-              [disabled]="ocupado || hayCambios || conflicto"
-              [attr.aria-label]="'Eliminar sobrante ' + detalle.codigo_lote"
-            >
-              {{ eliminandoId === detalle.id ? 'Eliminando…' : 'Eliminar sobrante' }}
-            </button>
+          
             @if (hayCambios) {
               <small>Guarda o descarta los cambios antes de eliminar.</small>
             }

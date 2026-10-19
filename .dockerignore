@@ -1,0 +1,14 @@
+**/node_modules
+**/.env
+**/.env.*
+**/.git
+**/.angular
+**/www
+**/dist
+**/uploads
+**/*.sql
+**/*.log
+**/server anterior.js
+**/cambiar-clave.js
+**/crear-usuarios.js
+**/probar-db.js

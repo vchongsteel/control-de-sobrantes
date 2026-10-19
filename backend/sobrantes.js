@@ -5,7 +5,9 @@ const path = require('node:path');
 const fs = require('node:fs/promises');
 const { randomUUID } = require('node:crypto');
 const db = require('./db');
-const carpetaFotos = path.join(__dirname, 'uploads', 'sobrantes');
+const carpetaFotos = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : path.join(__dirname, 'uploads', 'sobrantes');
 const rolesSistema = ['administrador', 'supervisor', 'bodega', 'colaborador'];
 const estados = ['pendiente', 'aprobado', 'rechazado'];
 function puedeRevisar(cuenta) {

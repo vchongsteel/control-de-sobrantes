@@ -4,12 +4,14 @@ import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { apiProduccionInterceptor } from './app/api-produccion.interceptor';
 
 bootstrapApplication(AppComponent, {
-  providers: [ provideHttpClient(),
+  providers: [ provideHttpClient(withInterceptors([apiProduccionInterceptor])),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
   ],
 });
+

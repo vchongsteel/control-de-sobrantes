@@ -74,7 +74,6 @@
             <tr>
               <th scope="col">Lote</th>
               <th scope="col">Material</th>
-              <th scope="col">Familia</th>
               <th scope="col">Foto</th>
               <th scope="col">Cantidad</th>
               <th scope="col">Unidad</th>
@@ -93,7 +92,6 @@
                   <strong>{{ sobrante.descripcion }}</strong>
                   <small>{{ sobrante.codigo }} · {{ sobrante.tipo }}</small>
                 </td>
-                <td>{{ sobrante.familia }}</td>
                 <td>
                   @if (fotos[sobrante.id]) {
                     <button

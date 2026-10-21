@@ -147,7 +147,7 @@
             }
             @if (!cargando && !error && sobrantes.length === 0) {
               <tr>
-                <td colspan="9" class="vacio">
+                <td colspan="8" class="vacio">
                   No hay sobrantes con estos filtros.
                 </td>
               </tr>
@@ -232,12 +232,6 @@
             <div>
               <dt>Fecha de revisión (UTC)</dt>
               <dd>{{ detalle.revisado_en | date:'dd/MM/yyyy HH:mm':'UTC' }}</dd>
-            </div>
-          }
-          @if (detalle.motivo_rechazo) {
-            <div>
-              <dt>Motivo del rechazo</dt>
-              <dd class="texto-largo">{{ detalle.motivo_rechazo }}</dd>
             </div>
           }
         </dl>
@@ -463,15 +457,17 @@
                 }
               </form>
             </div>
-            <div class="revision">
-            
-              @if (!detalle.material_id) {
-                <p class="nota">
-                  Para aprobar, primero asigna un material del catálogo y guarda los cambios.
-                </p>
-              }
-              
-              <div class="revision-acciones">
+          }
+        }
+        @if (puedeRevisar) {
+          <div class="revision">
+            @if (editable && !detalle.material_id) {
+              <p class="nota">
+                Para aprobar, primero asigna un material del catálogo y guarda los cambios.
+              </p>
+            }
+            <div class="revision-acciones" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+              @if (editable) {
                 <button
                   type="button"
                   class="principal"
@@ -479,28 +475,23 @@
                   [disabled]="ocupado || conflicto || hayCambios || !detalle.material_id"
                 >
                   Aprobar sobrante
-                </button><button
-              type="button"
-              class="boton-eliminar-detalle"
-              (click)="eliminar(detalle)"
-              [disabled]="ocupado || hayCambios || conflicto"
-              [attr.aria-label]="'Eliminar sobrante ' + detalle.codigo_lote"
-            >
-              {{ eliminandoId === detalle.id ? 'Eliminando…' : 'Eliminar sobrante' }}
-            </button>
-                
-              </div>
-              @if (revisando) {
-                <p role="status">Guardando revisión…</p>
+                </button>
               }
+              <button
+                type="button"
+                class="boton-eliminar-detalle"
+                (click)="eliminar(detalle)"
+                [disabled]="ocupado || hayCambios || conflicto"
+                [attr.aria-label]="'Eliminar sobrante ' + detalle.codigo_lote"
+              >
+                {{ eliminandoId === detalle.id ? 'Eliminando…' : 'Eliminar sobrante' }}
+              </button>
             </div>
-          }
-        }
-        @if (puedeRevisar) {
-          <div class="eliminar-detalle">
-          
+            @if (revisando) {
+              <p role="status">Guardando revisión…</p>
+            }
             @if (hayCambios) {
-              <small>Guarda o descarta los cambios antes de eliminar.</small>
+              <p class="nota">Guarda o descarta los cambios antes de aprobar o eliminar.</p>
             }
           </div>
         }

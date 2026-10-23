@@ -481,47 +481,7 @@
                 }
               </form>
             </div>
-            <div class="revision">
-              <h3>Aprobar o rechazar</h3>
-              @if (!detalle.material_id) {
-                <p class="nota">
-                  Para aprobar, primero asigna un material del catálogo y guarda los cambios.
-                </p>
-              }
-              <label for="motivo">Motivo del rechazo (obligatorio si rechazas)</label>
-              <textarea
-                id="motivo"
-                [(ngModel)]="motivo"
-                maxlength="1000"
-                rows="3"
-                [disabled]="ocupado || conflicto"
-              ></textarea>
-              <div class="revision-acciones">
-                <button
-                  type="button"
-                  class="principal"
-                  (click)="revisar('aprobado')"
-                  [disabled]="ocupado || conflicto || hayCambios || !detalle.material_id"
-                >
-                  Aprobar sobrante
-                </button>
-                <button
-                  type="button"
-                  class="rechazar"
-                  (click)="revisar('rechazado')"
-                  [disabled]="ocupado || conflicto || hayCambios"
-                >
-                  Rechazar sobrante
-                </button>
-              </div>
-              @if (revisando) {
-                <p role="status">Guardando revisión…</p>
-              }
-            </div>
-          }
-        }
-        @if (puedeRevisar) {
-          <div class="eliminar-detalle">
+            <div class="eliminar-detalle">
             <button
               type="button"
               class="boton-eliminar-detalle"
@@ -535,6 +495,25 @@
               <small>Guarda o descarta los cambios antes de eliminar.</small>
             }
           </div>
+            <div class="revision">
+              <div class="revision-acciones">
+                <button
+                  type="button"
+                  class="principal"
+                  (click)="revisar('aprobado')"
+                  [disabled]="ocupado || conflicto || hayCambios || !detalle.material_id"
+                >
+                  Aprobar sobrante
+                </button>
+              </div>
+              @if (revisando) {
+                <p role="status">Guardando revisión…</p>
+              }
+            </div>
+          }
+        }
+        @if (puedeRevisar) {
+          
         }
       </section>
     }

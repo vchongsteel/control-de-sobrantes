@@ -220,12 +220,12 @@ router.post('/restablecer-contrasena', limitar, async (req, res) => {
 
   if (
     typeof contrasena !== 'string' ||
-    contrasena.length < 12 ||
+    contrasena.length < 8 ||
     Buffer.byteLength(contrasena, 'utf8') > 72
   ) {
     return res.status(400).json({
       mensaje:
-        'Usa al menos 12 caracteres y como máximo 72 bytes.',
+        'Usa al menos 8 caracteres y como máximo 72 bytes.',
     });
   }
 

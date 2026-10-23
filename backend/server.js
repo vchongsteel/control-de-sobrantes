@@ -150,12 +150,12 @@ app.post('/api/registro', async (req, res) => {
     });
   }
   if (
-    contrasena.length < 12 ||
+    contrasena.length < 8 ||
     Buffer.byteLength(contrasena, 'utf8') > 72
   ) {
     return res.status(400).json({
       mensaje:
-        'Usa una contraseña de al menos 12 caracteres y como máximo 72 bytes.',
+        'Usa una contraseña de al menos 8 caracteres ',
     });
   }
   try {

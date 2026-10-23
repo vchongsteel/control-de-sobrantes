@@ -573,7 +573,20 @@ edicion-panel { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e3ea
   margin-top: 24px;
 }
 
-.acciones-sobrante small {
+:host .acciones-sobrante {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 20px !important;
+  row-gap: 12px;
+  margin-top: 24px !important;
+}
+
+:host .acciones-sobrante > button {
+  margin: 0 !important;
+}
+
+:host .acciones-sobrante > small {
   flex-basis: 100%;
   order: 1;
 }

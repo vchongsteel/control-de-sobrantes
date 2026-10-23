@@ -49,7 +49,7 @@ export class RestablecerContrasenaPage implements OnInit {
 
     if (formulario.invalid) {
       formulario.control.markAllAsTouched();
-      this.mensaje = 'Usa una contraseña de al menos 12 caracteres.';
+      this.mensaje = 'Usa una contraseña de al menos 8 caracteres.';
       return;
     }
 

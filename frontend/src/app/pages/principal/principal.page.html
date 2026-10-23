@@ -33,14 +33,8 @@
           @if (puedeAprobar) {
             <ion-menu-toggle [autoHide]="false"><a routerLink="/principal/aprobaciones" routerLinkActive="activo" ariaCurrentWhenActive="page"><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon><span>Aprobaciones</span></a></ion-menu-toggle>
           }
-          <button type="button" disabled>
-            <ion-icon name="car-outline" aria-hidden="true"></ion-icon>
-            <span>Despachos</span>
-          </button>
-          <button type="button" disabled>
-            <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
-            <span>Guías de salida</span>
-          </button>
+          @if(puedeDespachar){<ion-menu-toggle [autoHide]="false"><a routerLink="/principal/despachos" routerLinkActive="activo"><ion-icon name="car-outline" aria-hidden="true"></ion-icon><span>Despachos</span></a></ion-menu-toggle>}
+          <ion-menu-toggle [autoHide]="false"><a routerLink="/principal/guias-salida" routerLinkActive="activo"><ion-icon name="document-text-outline" aria-hidden="true"></ion-icon><span>Guías de salida</span></a></ion-menu-toggle>
           <button type="button" disabled>
             <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
             <span>Historial</span>

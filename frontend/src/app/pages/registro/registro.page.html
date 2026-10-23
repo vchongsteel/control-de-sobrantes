@@ -66,32 +66,32 @@
 
           <div class="campo">
             <label for="contrasena">Contraseña</label>
-            <input
+            <div class="clave-con-ojo"><input
               id="contrasena"
               name="contrasena"
-              type="password"
+              type="password" #claveVisible1
               [(ngModel)]="contrasena"
               autocomplete="new-password"
               required
-              minlength="12"
+              minlength="8"
               aria-describedby="ayuda-contrasena"
-            />
+            /><button type="button" class="ojo-clave" (click)="claveVisible1.type = claveVisible1.type === 'password' ? 'text' : 'password'" [attr.aria-label]="claveVisible1.type === 'password' ? 'Mostrar contraseña' : 'Ocultar contraseña'" [attr.aria-pressed]="claveVisible1.type === 'text'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             <small id="ayuda-contrasena">
-              Usa al menos 12 caracteres.
+              Usa al menos 8 caracteres.
             </small>
           </div>
 
           <div class="campo">
             <label for="confirmacion">Confirmar contraseña</label>
-            <input
+            <div class="clave-con-ojo"><input
               id="confirmacion"
               name="confirmacion"
-              type="password"
+              type="password" #claveVisible2
               [(ngModel)]="confirmarContrasena"
               autocomplete="new-password"
               required
-              minlength="12"
-            />
+              minlength="8"
+            /><button type="button" class="ojo-clave" (click)="claveVisible2.type = claveVisible2.type === 'password' ? 'text' : 'password'" [attr.aria-label]="claveVisible2.type === 'password' ? 'Mostrar contraseña' : 'Ocultar contraseña'" [attr.aria-pressed]="claveVisible2.type === 'text'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
           </div>
 
           <button type="submit" class="boton">

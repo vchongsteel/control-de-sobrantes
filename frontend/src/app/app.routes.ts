@@ -67,6 +67,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/aprobaciones/aprobaciones.page').then(m => m.AprobacionesPage),
       },
       {
+        path: 'despachos',
+        loadComponent: () => import('./pages/despachos/despachos.page').then(m => m.DespachosPage),
+      },
+      {
         path: 'registrar-sobrante',
         loadComponent: () =>
           import('./pages/registrar-sobrante/registrar-sobrante.page')

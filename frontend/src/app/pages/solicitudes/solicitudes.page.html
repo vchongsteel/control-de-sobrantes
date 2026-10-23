@@ -103,7 +103,7 @@
             <article class="solicitud-resumen"><div><h3>{{ s.codigo }}</h3>
               <p>{{ s.solicitante }} · {{ s.creado_en | date:'dd/MM/yyyy HH:mm' }}</p>
               <p>{{ s.proyecto || 'Sin proyecto indicado' }} · {{ s.lotes }} lotes</p></div>
-              <span class="estado" [class.aprobado]="s.estado !== 'cancelada'">{{ s.estado === 'enviada' ? 'Enviada · reservada' : s.estado === 'aprobada' ? 'Aprobada · reservada' : 'Cancelada' }}</span>
+              <span class="estado" [class.aprobado]="s.estado !== 'cancelada'">{{ s.estado === 'enviada' ? 'Enviada · reservada' : s.estado === 'aprobada' ? 'Aprobada · reservada' : s.estado === 'despachada' ? 'Despachada' : 'Cancelada' }}</span>
               <button type="button" (click)="verDetalle(s)">Ver detalle</button>
               @if (puedeCancelar(s)) { <button type="button" class="quitar" (click)="cancelar(s)" [disabled]="cancelando">Cancelar solicitud</button> }
             </article>

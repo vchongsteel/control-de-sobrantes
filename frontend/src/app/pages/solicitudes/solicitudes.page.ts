@@ -15,7 +15,7 @@ interface Linea extends Lote { cantidad: number; }
 interface Opcion { familia_id: number; familia: string; tipo: string; }
 interface Solicitud {
   id: string; codigo: string; solicitado_por: string; solicitante: string;
-  proyecto: string; observaciones: string; estado: 'enviada' | 'aprobada' | 'cancelada';
+  proyecto: string; observaciones: string; estado: 'enviada' | 'aprobada' | 'despachada' | 'cancelada';
   creado_en: string; lotes: number;
 }
 interface Detalle { sobrante_id: string; codigo: string; codigo_lote: string;

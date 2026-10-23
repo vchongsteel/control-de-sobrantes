@@ -565,3 +565,15 @@ edicion-panel { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e3ea
 .resultado-catalogo.elegido { border-color: #164e78; background: #eaf2fa; }
 .campo-edicion .ng-touched.ng-invalid { border-color: #b84343; }
 @media (max-width: 767px) { .campos-edicion { grid-template-columns: 1fr; } }
+.acciones-sobrante {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.acciones-sobrante small {
+  flex-basis: 100%;
+  order: 1;
+}

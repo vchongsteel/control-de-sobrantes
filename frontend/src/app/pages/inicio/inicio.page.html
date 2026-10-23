@@ -19,12 +19,13 @@
           <a routerLink="/principal/registrar-sobrante">Registrar sobrante</a>
         </article>
         <article class="acceso">
-          <div class="simbolo" aria-hidden="true">↗</div>
-          <h3>Solicitudes</h3>
-          <p>Solicita materiales sobrantes para utilizarlos en otro proyecto.</p>
-          <button type="button" disabled>Próximamente</button>
-          <span class="nota">Módulo pendiente de implementar.</span>
-        </article>
+  <div class="simbolo" aria-hidden="true">↗</div>
+  <h3>Solicitudes</h3>
+  <p>Solicita materiales sobrantes para utilizarlos en otro proyecto.</p>
+  <a class="boton" routerLink="/principal/solicitudes">
+    Ir a solicitudes
+  </a>
+</article>
         @if (puedeRevisar) {
           <article class="acceso">
             <div class="simbolo" aria-hidden="true">✓</div>

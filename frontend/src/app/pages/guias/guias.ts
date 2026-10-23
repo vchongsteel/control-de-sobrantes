@@ -7,7 +7,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { timeout } from 'rxjs';
 interface Guia {id:string;codigo:string;despacho:string;solicitud:string;proyecto:string;creado_en:string;recibido_por:string;entregado_por:string;solicitante:string;observaciones:string;}
 interface Linea {sobrante_id:string;codigo_lote:string;codigo:string;descripcion:string;entregada:string;unidad:string;}
-@Component({selector:'app-guias-salida',standalone:true,imports:[CommonModule,FormsModule,IonContent],templateUrl:'./guias-salida.page.html',styleUrls:['./guias-salida.page.scss']})
+@Component({selector:'app-guias-salida',standalone:true,imports:[CommonModule,FormsModule,IonContent],templateUrl: './guias.html',
+styleUrls: ['./guias.scss'],})
 export class GuiasSalidaPage {
  private http=inject(HttpClient);private detector=inject(ChangeDetectorRef);private destroy=inject(DestroyRef);private api='http://localhost:3000/api/guias';private secuencia=0;
  buscar='';pagina=1;total=0;guias:Guia[]=[];guia:Guia|null=null;detalles:Linea[]=[];cargando=false;cargandoDetalle=false;error='';

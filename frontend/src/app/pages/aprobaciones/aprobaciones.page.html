@@ -1,0 +1,28 @@
+<ion-content [scrollY]="true">
+  <main>
+    <header><div><p class="etiqueta">STEEL · IEM</p><h1>Aprobaciones</h1><p>Revisa las solicitudes de materiales pendientes.</p></div><button (click)="cargar()" [disabled]="cargando || aprobando">Actualizar</button></header>
+    @if (error) { <p class="error" role="alert">{{ error }}</p> }
+    @if (mensaje) { <p class="mensaje" role="status">{{ mensaje }}</p> }
+    <div class="columnas">
+      <section class="panel" aria-labelledby="pendientes"><h2 id="pendientes">Solicitudes pendientes</h2>
+        @if (cargando) { <p role="status">Cargando…</p> }
+        @else { @for (s of solicitudes; track s.id) {
+          <button class="solicitud" (click)="ver(s)" [disabled]="aprobando" [class.activa]="seleccion?.id === s.id"><strong>{{ s.codigo }}</strong><span>{{ s.solicitante }}</span><span>{{ s.proyecto || 'Sin proyecto indicado' }}</span><small>{{ s.creado_en | date:'dd/MM/yyyy HH:mm' }}</small></button>
+        } @empty { <p>No hay solicitudes pendientes para mostrar.</p> } }
+        <nav aria-label="Páginas de solicitudes"><button (click)="cambiar(-1)" [disabled]="pagina === 1 || cargando || aprobando">Anterior</button><span>{{ pagina }} / {{ paginas }}</span><button (click)="cambiar(1)" [disabled]="pagina >= paginas || cargando || aprobando">Siguiente</button></nav>
+      </section>
+      <section class="panel" aria-labelledby="detalle"><h2 id="detalle">Detalle de la solicitud</h2>
+        @if (cargandoDetalle) { <p role="status">Cargando detalle…</p> }
+        @else if (seleccion; as s) {
+          <h3>{{ s.codigo }}</h3><p><strong>Solicitante:</strong> {{ s.solicitante }}</p><p><strong>Proyecto:</strong> {{ s.proyecto || 'Sin indicar' }}</p><p><strong>Estado:</strong> {{ s.estado }}</p>
+          @if (s.observaciones) { <p class="observaciones">{{ s.observaciones }}</p> }
+          <div class="tabla"><table><thead><tr><th>Lote / artículo</th><th>Cantidad</th><th>Ubicación</th></tr></thead><tbody>
+            @for (d of detalles; track d.sobrante_id) { <tr><td><strong>{{ d.codigo_lote }} · {{ d.codigo }}</strong><br>{{ d.descripcion }}</td><td>{{ d.cantidad | number:'1.0-3' }} {{ d.unidad }}</td><td>{{ d.ubicacion }}</td></tr> }
+          </tbody></table></div>
+          @if (s.estado === 'enviada') { <button class="principal" (click)="aprobar()" [disabled]="aprobando">{{ aprobando ? 'Aprobando…' : 'Aprobar solicitud' }}</button> }
+          <p class="nota">Los materiales permanecen reservados para su posterior alistamiento.</p>
+        } @else { <p>Selecciona una solicitud para revisar sus materiales.</p> }
+      </section>
+    </div>
+  </main>
+</ion-content>

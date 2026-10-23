@@ -1,9 +1,5 @@
 <ion-split-pane contentId="contenido-principal" when="lg">
-  <ion-menu
-    menuId="menu-principal"
-    contentId="contenido-principal"
-    type="overlay"
-  >
+  <ion-menu menuId="menu-principal" contentId="contenido-principal" type="overlay">
     <ion-content>
       <div class="menu-container">
         <div class="marca">
@@ -11,96 +7,108 @@
             <img src="assets/Logo/STEEL.jpeg" alt="STEEL" />
             <img src="assets/Logo/IEM.jpeg" alt="IEM" />
           </div>
-
-          <p class="marca-titulo">Control de Sobrantes</p>
           <p class="marca-subtitulo">Gestión de materiales</p>
-
-          <p *ngIf="nombreUsuario" class="marca-subtitulo">
-            {{ nombreUsuario }}
-          </p>
-
-          <p *ngIf="mensajeSesion" class="marca-subtitulo" role="status">
-            {{ mensajeSesion }}
-          </p>
         </div>
 
         <nav class="menu-opciones" aria-label="Menú principal">
-          <p class="menu-etiqueta">PRINCIPAL</p>
-
           <ion-menu-toggle [autoHide]="false">
-            <a
-              routerLink="/principal/inicio"
-              routerLinkActive="activo"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              Inicio
+            <a routerLink="/principal/inicio" routerLinkActive="activo"
+              [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">
+              <ion-icon name="home-outline" aria-hidden="true"></ion-icon>
+              <span>Inicio</span>
             </a>
           </ion-menu-toggle>
-
           <ion-menu-toggle [autoHide]="false">
-  <a
-    routerLink="/principal/sobrantes"
-    routerLinkActive="activo"
-  >
-    Sobrantes
-  </a>
-</ion-menu-toggle>
-          <button disabled>Solicitudes</button>
-          <button disabled>Aprobaciones</button>
-          <button disabled>Despachos</button>
-          <button disabled>Guías de salida</button>
-          <button disabled>Historial</button>
-
-          <ng-container *ngIf="esAdministrador">
+            <a routerLink="/principal/sobrantes" routerLinkActive="activo" ariaCurrentWhenActive="page">
+              <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+              <span>Sobrantes</span>
+            </a>
+          </ion-menu-toggle>
+          <ion-menu-toggle [autoHide]="false">
+            <a routerLink="/principal/solicitudes" routerLinkActive="activo" ariaCurrentWhenActive="page">
+              <ion-icon name="clipboard-outline" aria-hidden="true"></ion-icon>
+              <span>Solicitudes</span>
+            </a>
+          </ion-menu-toggle>
+          @if (puedeAprobar) {
+            <ion-menu-toggle [autoHide]="false"><a routerLink="/principal/aprobaciones" routerLinkActive="activo" ariaCurrentWhenActive="page"><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon><span>Aprobaciones</span></a></ion-menu-toggle>
+          }
+          <button type="button" disabled>
+            <ion-icon name="car-outline" aria-hidden="true"></ion-icon>
+            <span>Despachos</span>
+          </button>
+          <button type="button" disabled>
+            <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+            <span>Guías de salida</span>
+          </button>
+          <button type="button" disabled>
+            <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+            <span>Historial</span>
+          </button>
+          @if (esAdministrador) {
             <p class="menu-etiqueta">ADMINISTRACIÓN</p>
-
             <ion-menu-toggle [autoHide]="false">
-              <a
-                routerLink="/principal/administrar-usuarios"
-                routerLinkActive="activo"
-                [routerLinkActiveOptions]="{ exact: true }"
-              >
-                Administrar usuarios
+              <a routerLink="/principal/administrar-usuarios" routerLinkActive="activo"
+                [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">
+                <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+                <span>Administrar usuarios</span>
               </a>
             </ion-menu-toggle>
-          </ng-container>
+          }
         </nav>
-
-        <div class="menu-pie">
-          <p>STEEL · IEM</p>
-
-          <ion-menu-toggle [autoHide]="false">
-            <button class="salir" (click)="cerrarSesion()">
-              Cerrar sesión
-            </button>
-          </ion-menu-toggle>
-        </div>
+        <div class="menu-pie"><p>Control de Sobrantes</p><small>STEEL · IEM</small></div>
       </div>
     </ion-content>
   </ion-menu>
 
   <div class="ion-page area-principal" id="contenido-principal">
-    <div class="paginas">
-      <ion-router-outlet></ion-router-outlet>
-    </div>
-
-    <nav class="barra-movil" aria-label="Navegación móvil">
-      <a
-        routerLink="/principal/inicio"
-        routerLinkActive="activo"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        Inicio
-      </a>
-
-      <button disabled>Sobrantes</button>
-      <button disabled>Solicitudes</button>
-
-      <ion-menu-toggle [autoHide]="false">
-        <button aria-label="Abrir menú de cuenta">
-          Cuenta
+    <header class="barra-superior">
+      <div class="cabecera-movil">
+        <ion-menu-button menu="menu-principal" aria-label="Abrir menú principal"></ion-menu-button>
+        <span>STEEL · IEM</span>
+      </div>
+      <div class="cuenta">
+        <button type="button" class="perfil-boton" (click)="alternarMenuPerfil($event)"
+          [attr.aria-expanded]="menuPerfilAbierto" aria-controls="opciones-perfil"
+          aria-label="Abrir opciones de mi cuenta">
+          <span class="avatar" aria-hidden="true">{{ iniciales }}</span>
+          <span class="perfil-identidad">
+            <strong>{{ nombreUsuario || 'Mi cuenta' }}</strong>
+            <small>{{ rolVisible }}</small>
+          </span>
+          <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon>
         </button>
-      </ion-menu-toggle>
-    </nav>
+        @if (menuPerfilAbierto) {
+          <div id="opciones-perfil" class="perfil-desplegable">
+            <button type="button" (click)="abrirPerfil()">
+              <ion-icon name="person-outline" aria-hidden="true"></ion-icon>Mi perfil
+            </button>
+            <button type="button" class="cerrar-sesion" (click)="cerrarSesion()">
+              <ion-icon name="log-out-outline" aria-hidden="true"></ion-icon>Cerrar sesión
+            </button>
+          </div>
+        }
+      </div>
+    </header>
+    @if (mensajeSesion) { <p class="aviso-sesion" role="status">{{ mensajeSesion }}</p> }
+    <div class="paginas"><ion-router-outlet></ion-router-outlet></div>
+    @if (perfilAbierto) {
+      <section class="perfil-panel" role="region" aria-labelledby="titulo-perfil">
+        <div class="perfil-panel-cabecera">
+          <h2 id="titulo-perfil">Mi perfil</h2>
+          <button type="button" class="icono-boton" (click)="cerrarPerfil()" aria-label="Cerrar mi perfil">
+            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+        <span class="avatar avatar-grande" aria-hidden="true">{{ iniciales }}</span>
+        <dl>
+          <dt>Nombre</dt><dd>{{ nombreUsuario || 'No disponible' }}</dd>
+          <dt>Usuario</dt><dd>{{ usuarioActual?.usuario || 'No disponible' }}</dd>
+          <dt>Correo</dt><dd>{{ usuarioActual?.correo || 'Sin correo registrado' }}</dd>
+          <dt>Rol</dt><dd>{{ rolVisible }}</dd>
+        </dl>
+        <button type="button" class="volver-boton" (click)="cerrarPerfil()">Volver al sistema</button>
+      </section>
+    }
   </div>
 </ion-split-pane>

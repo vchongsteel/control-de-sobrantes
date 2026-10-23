@@ -538,6 +538,8 @@ app.get(
   }
 );
 app.use('/api/sobrantes', require('./sobrantes')(comprobarSesion));
+app.use('/api/solicitudes', require('./solicitudes')(comprobarSesion));
+app.use('/api/despachos', require('./despachos')(comprobarSesion));
 // Las rutas API inexistentes nunca deben devolver el HTML del frontend.
 app.use('/api', (req, res) => {
   res.status(404).json({ mensaje: 'Ruta de API no encontrada.' });

@@ -1,0 +1,17 @@
+:host{display:flex;flex-direction:column;height:100%;min-height:0;color:#17364b;font-family:Arial,sans-serif}
+ion-content{flex:1;--background:#f4f7fb;--padding-bottom:env(safe-area-inset-bottom)}main{max-width:1400px;margin:auto;padding:28px;box-sizing:border-box}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}h1{font-size:28px;margin:8px 0}
+h2{font-size:18px;margin:0 0 20px}p{line-height:1.6}.etiqueta,.nota,small{font-size:12px;color:#68798a}
+.columnas{display:grid;grid-template-columns:minmax(240px,1fr) minmax(0,2fr);gap:24px}.panel{background:white;border:1px solid #e3eaf1;border-radius:14px;padding:24px;min-width:0}
+button{font:inherit;min-height:44px;padding:10px 15px;border:1px solid #dbe5ee;border-radius:8px;color:#164e78;background:white;
+    cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+button:focus-visible{outline:2px solid #164e78;outline-offset:3px
+}.solicitud{display:flex;flex-direction:column;gap:8px;width:100%;margin:10px 0;text-align:left;overflow-wrap:anywhere}
+.activa{background:#eaf2fa;border-color:#164e78}nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:24px;font-size:12px}.tabla{overflow-x:auto;margin:24px 0}table{width:100%;border-collapse:collapse;min-width:440px}th,td{padding:14px 10px;text-align:left;border-bottom:1px solid #e3eaf1;font-size:13px;line-height:1.6}th{background:#eef2f5}.principal{background:#164e78;color:white;border-color:#164e78}.error,.mensaje{padding:14px;border-radius:8px}.error{background:#fff0f0;color:#a13d45}.mensaje{background:#e6f4e9;color:#1e6635}.observaciones{white-space:pre-wrap;overflow-wrap:anywhere}@media(max-width:850px){.columnas{grid-template-columns:1fr}main{padding:20px 14px}.panel{padding:18px}header{flex-wrap:wrap}}
+
+fieldset{border:0;padding:0;margin:0;min-width:0}.linea{padding:16px;border:1px solid #e3eaf1;border-radius:10px;margin:18px 0;overflow-wrap:anywhere}
+label{display:block;margin:14px 0 8px;font-size:13px;font-weight:600}
+input,textarea{width:100%;min-height:44px;padding:10px;border:1px solid #dbe5ee;border-radius:8px;color:#17364b;background:white;
+    font:inherit;box-sizing:border-box}textarea{min-height:90px;resize:vertical}input:focus-visible,textarea:focus-visible{outline:2px solid #164e78;outline-offset:2px}
+    input.ng-touched.ng-invalid{border-color:#a13d45}

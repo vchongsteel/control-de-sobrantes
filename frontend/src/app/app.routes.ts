@@ -57,6 +57,16 @@ export const routes: Routes = [
             .then((m) => m.SobrantesPage),
       },
       {
+        path: 'solicitudes',
+        loadComponent: () =>
+          import('./pages/solicitudes/solicitudes.page')
+            .then((m) => m.SolicitudesPage),
+      },
+      {
+        path: 'aprobaciones',
+        loadComponent: () => import('./pages/aprobaciones/aprobaciones.page').then(m => m.AprobacionesPage),
+      },
+      {
         path: 'registrar-sobrante',
         loadComponent: () =>
           import('./pages/registrar-sobrante/registrar-sobrante.page')

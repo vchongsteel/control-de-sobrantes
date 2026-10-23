@@ -1,0 +1,18 @@
+<ion-content [scrollY]="true"><main>
+<header><div><p class="etiqueta">STEEL · IEM</p><h1>Despachos</h1><p>Prepara y entrega los materiales de las solicitudes aprobadas.</p></div><button (click)="cargar()" [disabled]="cargando || enviando || !!pendiente">Actualizar</button></header>
+@if(error){<p class="error" role="alert">{{error}}</p>} @if(mensaje){<p class="mensaje" role="status">{{mensaje}}</p>}
+@if(pendiente){<p class="nota" role="status">Hay una confirmación pendiente. Reintenta para comprobar si se guardó; el servidor evita duplicar la entrega.</p><button (click)="confirmar()" [disabled]="enviando">Reintentar confirmación</button>}
+<div class="columnas"><section class="panel"><h2>Solicitudes aprobadas</h2>
+@if(cargando){<p role="status">Cargando…</p>}@else{@for(s of solicitudes;track s.id){<button class="solicitud" (click)="ver(s)" [disabled]="enviando || !!pendiente"><strong>{{s.codigo}}</strong><span>{{s.solicitante}}</span><small>{{s.proyecto || 'Sin proyecto'}}</small></button>}@empty{<p>No hay solicitudes pendientes de despacho.</p>}}
+<nav aria-label="Páginas"><button (click)="cambiar(-1)" [disabled]="pagina<=1 || cargando || enviando || !!pendiente">Anterior</button><span>{{pagina}} / {{paginas}}</span><button (click)="cambiar(1)" [disabled]="pagina>=paginas || cargando || enviando || !!pendiente">Siguiente</button></nav>
+</section><section class="panel"><h2>Preparar entrega</h2>
+@if(cargandoDetalle){<p role="status">Cargando detalle…</p>}@else if(seleccion;as s){<h3>{{s.codigo}}</h3><p>{{s.solicitante}} · {{s.proyecto || 'Sin proyecto'}}</p>@if(s.observaciones){<p class="observaciones">{{s.observaciones}}</p>}
+@if(s.estado!=='aprobada'){<p>Esta solicitud ya no está pendiente de despacho. Actualiza la lista.</p>}@else{
+<form (ngSubmit)="confirmar()"><fieldset [disabled]="enviando || !!pendiente">
+@for(d of lineas;track d.sobrante_id){<article class="linea"><strong>{{d.codigo_lote}} · {{d.descripcion}}</strong><p>Solicitada: {{d.cantidad | number:'1.0-3'}} {{d.unidad}} · Existencia física: {{d.existencia | number:'1.0-3'}} {{d.unidad}}</p><label [for]="'cantidad-'+d.sobrante_id">Cantidad entregada</label><input [id]="'cantidad-'+d.sobrante_id" [name]="'cantidad-'+d.sobrante_id" type="number" min="0" [max]="d.cantidad" step="0.001" required [(ngModel)]="d.entregada"><label [for]="'motivo-'+d.sobrante_id">Motivo del faltante o daño (obligatorio si entregas menos)</label><input [id]="'motivo-'+d.sobrante_id" [name]="'motivo-'+d.sobrante_id" maxlength="500" [(ngModel)]="d.motivo_faltante"></article>}
+<label for="receptor">Recibido por</label><input id="receptor" name="receptor" required maxlength="150" [(ngModel)]="receptor">
+<label for="observaciones">Observaciones de la entrega</label><textarea id="observaciones" name="observaciones" maxlength="1000" [(ngModel)]="observaciones"></textarea>
+<p class="nota">Este despacho cierra la solicitud. Lo no entregado queda registrado como faltante y se libera su reserva. Anotar un daño no descuenta material adicional del inventario.</p>
+<button class="principal" type="submit">Confirmar despacho</button></fieldset></form>
+}}@else{<p>Selecciona una solicitud para preparar sus materiales.</p>}
+</section></div></main></ion-content>

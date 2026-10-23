@@ -1,0 +1,132 @@
+<ion-content>
+  <main class="solicitudes-container">
+    <header class="encabezado">
+      <div><p class="etiqueta">STEEL · IEM</p><h1>Solicitar materiales</h1>
+        <p>Selecciona sobrantes disponibles y arma tu solicitud.</p></div>
+      <div class="pestanas" aria-label="Vistas de solicitudes">
+        <button type="button" [class.activa]="tab === 'catalogo'" [attr.aria-pressed]="tab === 'catalogo'" (click)="tab = 'catalogo'">Nueva solicitud</button>
+        <button type="button" [class.activa]="tab === 'solicitudes'" [attr.aria-pressed]="tab === 'solicitudes'" (click)="tab = 'solicitudes'; cargarSolicitudes()">{{ puedeVerTodas ? 'Solicitudes recibidas' : 'Mis solicitudes' }}</button>
+      </div>
+    </header>
+    @if (mensaje) { <p class="mensaje" role="status">{{ mensaje }}</p> }
+    @if (error) { <p class="error" role="alert">{{ error }}</p> }
+    @if (tab === 'catalogo') {
+      <form class="filtros" (ngSubmit)="cargarCatalogo(1)">
+        <div class="buscador"><label class="solo-lectores" for="buscar-solicitud">Buscar por código o descripción</label>
+          <input id="buscar-solicitud" name="buscar" [(ngModel)]="buscar" maxlength="200" placeholder="Buscar por código o descripción" type="search" />
+          <button type="submit">Buscar</button></div>
+        <div><label for="familia-solicitud">Familia</label>
+          <select id="familia-solicitud" name="familia" [(ngModel)]="familia" (ngModelChange)="cambiarFamilia()">
+            <option value="">Todas</option>
+            @for (f of familias; track f.id) { <option [value]="f.id">{{ f.nombre }}</option> }
+          </select></div>
+        <div><label for="tipo-solicitud">Tipo</label>
+          <select id="tipo-solicitud" name="tipo" [(ngModel)]="tipo" (ngModelChange)="cargarCatalogo(1)">
+            <option value="">Todos</option>
+            @for (t of tipos; track t) { <option [value]="t">{{ t }}</option> }
+          </select></div>
+        <button type="button" class="limpiar" (click)="limpiarFiltros()">Limpiar</button>
+      </form>
+      @if (errorFiltros) { <p class="error" role="alert">{{ errorFiltros }} <button type="button" (click)="cargarFiltros()">Reintentar filtros</button></p> }
+      <div class="distribucion">
+        <section aria-label="Catálogo de sobrantes aprobados" [attr.aria-busy]="cargando">
+          <div class="resumen"><p>{{ total }} lotes disponibles</p><button type="button" (click)="cargarCatalogo(pagina); cargarFiltros()" [disabled]="cargando">Actualizar</button></div>
+          @if (cargando) { <p class="nota" role="status">Consultando existencias…</p> }
+          @if (errorCatalogo) { <p class="error" role="alert">{{ errorCatalogo }} <button type="button" (click)="cargarCatalogo(pagina)">Reintentar</button></p> }
+          @if (!cargando && !errorCatalogo && !lotes.length) { <div class="vacio">No hay sobrantes disponibles con estos filtros.</div> }
+          <div class="catalogo">
+            @for (lote of lotes; track lote.id) {
+              <article class="tarjeta">
+                <div class="foto">
+                  @if (fotos[lote.id]) { <img [src]="fotos[lote.id]" [alt]="lote.descripcion" loading="lazy" /> }
+                  @else { <span>Sin fotografía disponible</span> }
+                </div>
+                <div class="tarjeta-cuerpo"><span class="estado aprobado">Aprobado</span>
+                  <h2>{{ lote.descripcion }}</h2><p class="codigo">{{ lote.codigo }}</p>
+                  <p class="dato"><strong>Lote:</strong> {{ lote.codigo_lote }}</p>
+                  <p class="dato"><strong>Ubicación:</strong> {{ lote.ubicacion }}</p>
+                  <p class="disponible">Disponible: {{ lote.disponible | number:'1.0-3' }} {{ nombreUnidad(lote.unidad) }}</p>
+                  <label [for]="'cantidad-' + lote.id">Cantidad ({{ nombreUnidad(lote.unidad) }})</label>
+                  <div class="selector-cantidad">
+                    <button type="button" (click)="sumarCantidad(lote, -1)" [disabled]="bloqueado" [attr.aria-label]="'Reducir cantidad de ' + lote.codigo_lote">−</button>
+                    <input [id]="'cantidad-' + lote.id" type="number" [(ngModel)]="cantidades[lote.id]" min="0.001" [max]="lote.disponible" step="0.001" [disabled]="bloqueado" />
+                    <button type="button" (click)="sumarCantidad(lote, 1)" [disabled]="bloqueado" [attr.aria-label]="'Aumentar cantidad de ' + lote.codigo_lote">+</button>
+                  </div>
+                  <button type="button" class="principal agregar" (click)="agregar(lote)" [disabled]="bloqueado || cargando">Agregar a la solicitud</button>
+                </div>
+              </article>
+            }
+          </div>
+          <nav class="paginacion" aria-label="Páginas del catálogo">
+            <button type="button" (click)="cargarCatalogo(pagina - 1)" [disabled]="pagina <= 1 || cargando">Anterior</button>
+            <span>Página {{ pagina }} de {{ paginas }}</span>
+            <button type="button" (click)="cargarCatalogo(pagina + 1)" [disabled]="pagina >= paginas || cargando">Siguiente</button>
+          </nav>
+        </section>
+        <aside class="carrito" [class.abierto]="carritoAbierto" aria-labelledby="titulo-carrito">
+          <div class="carrito-cabecera"><h2 id="titulo-carrito">Mi solicitud</h2><span>{{ carrito.length }} lotes</span>
+            <button type="button" class="cerrar-carrito" (click)="carritoAbierto = false">Cerrar</button></div>
+          @if (carritoAbierto && error) { <p class="error" role="alert">{{ error }}</p> }
+          @if (!carrito.length) { <p class="vacio">Agrega materiales del catálogo para comenzar.</p> }
+          @for (linea of carrito; track linea.id) {
+            <article class="linea-carrito">
+              <div class="linea-titulo"><h3>{{ linea.descripcion }}</h3><button type="button" class="quitar" (click)="quitar(linea.id)" [disabled]="bloqueado" [attr.aria-label]="'Quitar ' + linea.codigo_lote">Quitar</button></div>
+              <p>{{ linea.codigo }} · {{ linea.codigo_lote }}</p><p>{{ linea.ubicacion }}</p>
+              <label [for]="'carrito-' + linea.id">Cantidad ({{ nombreUnidad(linea.unidad) }})</label>
+              <div class="selector-cantidad">
+                <button type="button" (click)="cambiarCantidad(linea, -1)" [disabled]="bloqueado" [attr.aria-label]="'Reducir cantidad solicitada de ' + linea.codigo_lote">−</button>
+                <input [id]="'carrito-' + linea.id" [(ngModel)]="linea.cantidad" type="number" min="0.001" [max]="linea.disponible" step="0.001" [disabled]="bloqueado" />
+                <button type="button" (click)="cambiarCantidad(linea, 1)" [disabled]="bloqueado" [attr.aria-label]="'Aumentar cantidad solicitada de ' + linea.codigo_lote">+</button>
+              </div>
+            </article>
+          }
+          <div class="campos-solicitud"><label for="proyecto-solicitud">Proyecto o destino (opcional)</label>
+            <input id="proyecto-solicitud" [(ngModel)]="proyecto" maxlength="200" [disabled]="bloqueado" placeholder="Ejemplo: mantenimiento de bodega" />
+            <label for="observaciones-solicitud">Observaciones (opcional)</label>
+            <textarea id="observaciones-solicitud" [(ngModel)]="observaciones" maxlength="1000" rows="3" [disabled]="bloqueado"></textarea>
+            <p class="nota">Al enviar se reserva la cantidad. El inventario se descontará cuando se registre la entrega.</p>
+            @if (pendiente) { <p class="nota" role="status">El envío está pendiente de confirmación. Reinténtalo para recuperar el resultado sin duplicarlo.</p> }
+            <button type="button" class="principal enviar" (click)="enviar()" [disabled]="enviando || !carrito.length || !usuarioId">{{ enviando ? 'Enviando…' : pendiente ? 'Reintentar envío' : 'Enviar solicitud' }}</button>
+          </div>
+        </aside>
+      </div>
+      <button type="button" class="principal ver-carrito" (click)="carritoAbierto = true">Ver solicitud · {{ carrito.length }} lotes</button>
+    } @else {
+      <section class="panel">
+        <div class="resumen"><h2>{{ puedeVerTodas ? 'Solicitudes recibidas' : 'Mis solicitudes' }}</h2>
+          <button type="button" (click)="cargarSolicitudes(paginaSolicitudes)" [disabled]="cargandoSolicitudes">Actualizar</button></div>
+        @if (errorSolicitudes) { <p class="error" role="alert">{{ errorSolicitudes }}</p> }
+        @if (cargandoSolicitudes) { <p role="status">Cargando solicitudes…</p> }
+        @if (!cargandoSolicitudes && !errorSolicitudes && !solicitudes.length) { <p class="vacio">Todavía no hay solicitudes.</p> }
+        <div class="lista-solicitudes">
+          @for (s of solicitudes; track s.id) {
+            <article class="solicitud-resumen"><div><h3>{{ s.codigo }}</h3>
+              <p>{{ s.solicitante }} · {{ s.creado_en | date:'dd/MM/yyyy HH:mm' }}</p>
+              <p>{{ s.proyecto || 'Sin proyecto indicado' }} · {{ s.lotes }} lotes</p></div>
+              <span class="estado" [class.aprobado]="s.estado !== 'cancelada'">{{ s.estado === 'enviada' ? 'Enviada · reservada' : s.estado === 'aprobada' ? 'Aprobada · reservada' : 'Cancelada' }}</span>
+              <button type="button" (click)="verDetalle(s)">Ver detalle</button>
+              @if (puedeCancelar(s)) { <button type="button" class="quitar" (click)="cancelar(s)" [disabled]="cancelando">Cancelar solicitud</button> }
+            </article>
+          }
+        </div>
+        <nav class="paginacion" aria-label="Páginas de solicitudes">
+          <button type="button" (click)="cargarSolicitudes(paginaSolicitudes - 1)" [disabled]="paginaSolicitudes <= 1 || cargandoSolicitudes">Anterior</button>
+          <span>Página {{ paginaSolicitudes }} de {{ paginasSolicitudes }}</span>
+          <button type="button" (click)="cargarSolicitudes(paginaSolicitudes + 1)" [disabled]="paginaSolicitudes >= paginasSolicitudes || cargandoSolicitudes">Siguiente</button>
+        </nav>
+      </section>
+      @if (solicitudDetalle; as s) {
+        <section class="panel" aria-labelledby="titulo-solicitud-detalle">
+          <div class="resumen"><h2 id="titulo-solicitud-detalle">{{ s.codigo }}</h2><button type="button" (click)="solicitudDetalle = null">Cerrar detalle</button></div>
+          <p>{{ s.solicitante }} · {{ s.proyecto || 'Sin proyecto indicado' }}</p>
+          @if (s.observaciones) { <p class="observaciones">{{ s.observaciones }}</p> }
+          @if (cargandoDetalle) { <p role="status">Cargando detalle…</p> }
+          @if (errorDetalle) { <p class="error" role="alert">{{ errorDetalle }}</p> }
+          <div class="tabla-scroll"><table><thead><tr><th>Lote</th><th>Material</th><th>Cantidad</th><th>Ubicación</th></tr></thead><tbody>
+            @for (d of detalles; track d.sobrante_id) { <tr><td>{{ d.codigo_lote }}</td><td>{{ d.descripcion }}<small>{{ d.codigo }}</small></td><td>{{ d.cantidad | number:'1.0-3' }} {{ nombreUnidad(d.unidad) }}</td><td>{{ d.ubicacion }}</td></tr> }
+          </tbody></table></div>
+        </section>
+      }
+    }
+  </main>
+</ion-content>

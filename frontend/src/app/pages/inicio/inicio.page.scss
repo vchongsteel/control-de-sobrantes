@@ -590,3 +590,25 @@ edicion-panel { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e3ea
   flex-basis: 100%;
   order: 1;
 }
+.acceso {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.acceso:hover,
+.acceso:focus-within {
+  background: #164e78;
+  border-color: #164e78;
+
+  h3,
+  p,
+  .nota,
+  .simbolo {
+    color: #ffffff;
+  }
+
+  .boton {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #164e78;
+  }
+}

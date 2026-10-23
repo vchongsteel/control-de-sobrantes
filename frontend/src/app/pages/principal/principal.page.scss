@@ -167,3 +167,17 @@ a:focus-visible, button:focus-visible { outline: 2px solid #164e78; outline-offs
   .avatar { width: 38px; height: 38px; font-size: 13px; }
   .perfil-panel { top: calc(64px + env(safe-area-inset-top, 0px)); }
 }
+.menu-opciones a,
+.menu-opciones button,
+.barra-movil a,
+.barra-movil button {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.menu-opciones a:hover,
+.menu-opciones button:not(:disabled):hover,
+.barra-movil a:hover,
+.barra-movil button:not(:disabled):hover {
+  background: #164e78;
+  color: #ffffff;
+}

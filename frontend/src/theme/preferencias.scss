@@ -1,0 +1,53 @@
+@import '@ionic/angular/css/palettes/dark.class.css';
+
+:root {
+  --app-fondo:#f4f7fb;
+  --app-panel:#ffffff;
+  --app-texto:#17364b;
+  --app-suave:#68798a;
+  --app-borde:#dbe5ee;
+  --app-acento:#164e78;
+}
+html.tema-claro { color-scheme:light; }
+html.tema-oscuro {
+  color-scheme:dark;
+  --app-fondo:#101923;
+  --app-panel:#192633;
+  --app-texto:#e8eef5;
+  --app-suave:#b1c0cf;
+  --app-borde:#3b5062;
+  --app-acento:#8ec5f5;
+  --ion-background-color:var(--app-fondo);
+  --ion-text-color:var(--app-texto);
+  --ion-color-medium-shade:#b1c0cf;
+  --ion-toolbar-background:var(--app-panel);
+  --ion-toolbar-color:var(--app-texto);
+}
+
+/* Las páginas existentes usan colores fijos; estas reglas cubren sus superficies comunes. */
+html.tema-oscuro {
+  body, ion-app, .area-principal, .paginas { background:var(--app-fondo) !important; color:var(--app-texto) !important; }
+  ion-content { --background:var(--app-fondo) !important; --color:var(--app-texto) !important; }
+  ion-menu, ion-menu ion-content, ion-toolbar { --background:var(--app-panel) !important; --color:var(--app-texto) !important; }
+  :is(.barra-superior,.barra-movil,.menu-container,.perfil-desplegable,.perfil-panel,.panel,.recientes,.acceso,.modulo,.registro-card,.login-card,.tarjeta,.carrito,.material-elegido,.aviso-manual,.material-asignado,.selector-foto) {
+    background:var(--app-panel) !important; color:var(--app-texto) !important; border-color:var(--app-borde) !important;
+  }
+  :is(h1,h2,h3,label,dd,.marca-titulo,.perfil-identidad strong,.material strong,.lote) { color:var(--app-texto) !important; }
+  :is(p,small,dt,.nota,.introduccion,.intro,.marca-subtitulo,.etiqueta,.menu-etiqueta,.material small) { color:var(--app-suave) !important; }
+  :is(input,select,textarea) { background:#101b27 !important; color:var(--app-texto) !important; border-color:var(--app-borde) !important; }
+  :is(input,textarea)::placeholder { color:var(--app-suave) !important; opacity:1; }
+  :is(th,td,.marca,.revision,.edicion-panel,.perfil-panel-cabecera) { border-color:var(--app-borde) !important; }
+  thead, thead th { background:#223548 !important; color:var(--app-texto) !important; }
+  :is(.menu-opciones a,.menu-opciones button,.perfil-boton,.icono-boton,.perfil-desplegable button,.barra-movil a,.barra-movil button) { color:var(--app-texto) !important; }
+  .perfil-desplegable button, .perfil-boton { background:transparent; }
+  :is(.menu-opciones a.activo,.menu-opciones a:hover,.menu-opciones button:not(:disabled):hover,.perfil-desplegable button:hover,.barra-movil a.activo) { background:#254665 !important; color:#ffffff !important; }
+  :is(.acceso a,.acceso button,.modulo a,.modulo button,.boton:not(.principal),.volver-boton,.herramientas button,.revision-acciones button:not(.principal)) { background:#223548 !important; color:var(--app-texto) !important; border-color:var(--app-borde) !important; }
+  .principal { background:#246490 !important; border-color:#4382ad !important; color:#ffffff !important; }
+  :is(.simbolo,.avatar,.identificador) { background:#27445f !important; color:#e8eef5 !important; }
+  :is(.acceso:hover,.acceso:focus-within) { background:#254665 !important; }
+  .acceso:hover :is(h3,p,small), .acceso:focus-within :is(h3,p,small) { color:#ffffff !important; }
+  :is(.mensaje,.aviso-sesion) { background:#203d58 !important; color:#d6eaff !important; }
+  .error { background:#4b242c !important; color:#ffced3 !important; }
+  .cerrar-sesion, .boton-eliminar-detalle, .boton-eliminar { color:#ffb6bd !important; }
+  .logos img, .company-logos img { background:#ffffff; border-radius:4px; }
+}

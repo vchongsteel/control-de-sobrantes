@@ -49,6 +49,14 @@
               </a>
             </ion-menu-toggle>
           }
+          <p class="menu-etiqueta">PREFERENCIAS</p>
+          <ion-menu-toggle [autoHide]="false">
+            <a routerLink="/principal/configuracion" routerLinkActive="activo" ariaCurrentWhenActive="page"
+              (click)="cerrarPerfil(); menuPerfilAbierto = false">
+              <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+              <span>Configuración</span>
+            </a>
+          </ion-menu-toggle>
         </nav>
         <div class="menu-pie"><p>Control de Sobrantes</p><small>STEEL · IEM</small></div>
       </div>
@@ -76,6 +84,9 @@
           <div id="opciones-perfil" class="perfil-desplegable">
             <button type="button" (click)="abrirPerfil()">
               <ion-icon name="person-outline" aria-hidden="true"></ion-icon>Mi perfil
+            </button>
+            <button type="button" routerLink="/principal/configuracion" (click)="cerrarPerfil(); menuPerfilAbierto = false">
+              <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>Configuración
             </button>
             <button type="button" class="cerrar-sesion" (click)="cerrarSesion()">
               <ion-icon name="log-out-outline" aria-hidden="true"></ion-icon>Cerrar sesión

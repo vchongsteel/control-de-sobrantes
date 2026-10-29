@@ -71,16 +71,18 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/despachos/despachos.page').then(m => m.DespachosPage),
       },
       {
-  path: 'guias-salida',
-  loadComponent: () =>
-    import('./pages/guias/guias')
-      .then(m => m.GuiasSalidaPage),
-},
+        path: 'guias-salida',
+        loadComponent: () => import('./pages/guias/guias').then(m => m.GuiasSalidaPage),
+      },
       {
         path: 'registrar-sobrante',
         loadComponent: () =>
           import('./pages/registrar-sobrante/registrar-sobrante.page')
             .then((m) => m.RegistrarSobrantePage),
+      },
+      {
+        path: 'configuracion',
+        loadComponent: () => import('./pages/configuracion/configuracion.page').then(m => m.ConfiguracionPage),
       },
       {
         path: 'administrar-usuarios',

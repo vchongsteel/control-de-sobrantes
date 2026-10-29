@@ -1,0 +1,102 @@
+<ion-content>
+  <main class="configuracion-container">
+    <p class="etiqueta">STEEL · IEM</p>
+    <h1>Configuración</h1>
+    <p class="introduccion">Personaliza la apariencia y consulta tu cuenta.</p>
+
+    <section class="config-panel" aria-labelledby="apariencia-titulo">
+      <h2 id="apariencia-titulo">Apariencia</h2>
+      <p>Elige cómo quieres ver el sistema en este navegador.</p>
+      <div class="temas" role="group" aria-label="Tema del sistema">
+        <button type="button" class="tema-opcion" [class.elegido]="tema.actual() === 'claro'"
+          [attr.aria-pressed]="tema.actual() === 'claro'" (click)="tema.elegir('claro')">
+          <span class="muestra claro" aria-hidden="true">☀</span>
+          <strong>Tema claro</strong><small>Fondos claros y texto oscuro</small>
+        </button>
+        <button type="button" class="tema-opcion" [class.elegido]="tema.actual() === 'oscuro'"
+          [attr.aria-pressed]="tema.actual() === 'oscuro'" (click)="tema.elegir('oscuro')">
+          <span class="muestra oscuro" aria-hidden="true">☾</span>
+          <strong>Tema oscuro</strong><small>Fondos oscuros y texto claro</small>
+        </button>
+      </div>
+      <p class="nota" role="status">
+        @if (tema.guardado()) { Tu elección se guarda automáticamente en este navegador. }
+        @else { El tema se aplicó, pero el navegador no permite guardar la preferencia. }
+      </p>
+    </section>
+
+    <section class="config-panel" aria-labelledby="cuenta-titulo" [attr.aria-busy]="cargando()">
+      <h2 id="cuenta-titulo">Mi cuenta</h2>
+      @if (cargando()) { <p role="status">Cargando datos…</p> }
+      @if (error()) {
+        <p role="alert">{{ error() }}</p>
+        <button type="button" (click)="cargarUsuario()">Volver a intentar</button>
+      }
+      @if (usuario(); as cuenta) {
+        <dl>
+          <div><dt>Nombre</dt><dd>{{ cuenta.nombre }}</dd></div>
+          <div><dt>Usuario</dt><dd>{{ cuenta.usuario }}</dd></div>
+          <div><dt>Correo</dt><dd>{{ cuenta.correo || 'Sin correo registrado' }}</dd></div>
+          <div><dt>Roles</dt><dd>{{ cuenta.roles.join(', ') || 'Sin rol asignado' }}</dd></div>
+        </dl>
+      }
+    </section>
+
+    <section class="config-panel" aria-labelledby="seguridad-titulo">
+      <h2 id="seguridad-titulo">Seguridad</h2>
+      <p>Para restablecer tu contraseña, solicita el enlace de recuperación con tu correo registrado.</p>
+      <a class="config-enlace" routerLink="/recuperar-contrasena">Restablecer contraseña</a>
+    </section>
+  </main>
+</ion-content>
+<ion-content>
+  <main class="configuracion-container">
+    <p class="etiqueta">STEEL · IEM</p>
+    <h1>Configuración</h1>
+    <p class="introduccion">Personaliza la apariencia y consulta tu cuenta.</p>
+
+    <section class="config-panel" aria-labelledby="apariencia-titulo">
+      <h2 id="apariencia-titulo">Apariencia</h2>
+      <p>Elige cómo quieres ver el sistema en este navegador.</p>
+      <div class="temas" role="group" aria-label="Tema del sistema">
+        <button type="button" class="tema-opcion" [class.elegido]="tema.actual() === 'claro'"
+          [attr.aria-pressed]="tema.actual() === 'claro'" (click)="tema.elegir('claro')">
+          <span class="muestra claro" aria-hidden="true">☀</span>
+          <strong>Tema claro</strong><small>Fondos claros y texto oscuro</small>
+        </button>
+        <button type="button" class="tema-opcion" [class.elegido]="tema.actual() === 'oscuro'"
+          [attr.aria-pressed]="tema.actual() === 'oscuro'" (click)="tema.elegir('oscuro')">
+          <span class="muestra oscuro" aria-hidden="true">☾</span>
+          <strong>Tema oscuro</strong><small>Fondos oscuros y texto claro</small>
+        </button>
+      </div>
+      <p class="nota" role="status">
+        @if (tema.guardado()) { Tu elección se guarda automáticamente en este navegador. }
+        @else { El tema se aplicó, pero el navegador no permite guardar la preferencia. }
+      </p>
+    </section>
+
+    <section class="config-panel" aria-labelledby="cuenta-titulo" [attr.aria-busy]="cargando()">
+      <h2 id="cuenta-titulo">Mi cuenta</h2>
+      @if (cargando()) { <p role="status">Cargando datos…</p> }
+      @if (error()) {
+        <p role="alert">{{ error() }}</p>
+        <button type="button" (click)="cargarUsuario()">Volver a intentar</button>
+      }
+      @if (usuario(); as cuenta) {
+        <dl>
+          <div><dt>Nombre</dt><dd>{{ cuenta.nombre }}</dd></div>
+          <div><dt>Usuario</dt><dd>{{ cuenta.usuario }}</dd></div>
+          <div><dt>Correo</dt><dd>{{ cuenta.correo || 'Sin correo registrado' }}</dd></div>
+          <div><dt>Roles</dt><dd>{{ cuenta.roles.join(', ') || 'Sin rol asignado' }}</dd></div>
+        </dl>
+      }
+    </section>
+
+    <section class="config-panel" aria-labelledby="seguridad-titulo">
+      <h2 id="seguridad-titulo">Seguridad</h2>
+      <p>Para restablecer tu contraseña, solicita el enlace de recuperación con tu correo registrado.</p>
+      <a class="config-enlace" routerLink="/recuperar-contrasena">Restablecer contraseña</a>
+    </section>
+  </main>
+</ion-content>
